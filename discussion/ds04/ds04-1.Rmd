@@ -32,12 +32,12 @@ Create a new data frame called `mtcars.small` with just these two columns and pr
 ```{r}
 ### TODO: uncomment the below and complete.
 
-#mtcars.small <- ...
+mtcars.small <- data.frame(drat = mtcars$drat, mpg = mtcars$mpg)
 ```
 
 b) Below, we've performed a simple linear regression, showing the coefficients. **Take note of the coefficient estimate for the slope $\beta_1$**, which represents the strength of the linear relationship between the two variables.
 __Note:__ this measure is NOT the same as _significance_; [see this](https://en.wikipedia.org/wiki/Statistical_significance#Effect_size).
-   
+
 One way to estimate the _significance_ of $\beta_1$ (and the one that is most commonly taught at the undergraduate level) is to use the linear regression model to derive a [$t$-statistic test](https://www.real-statistics.com/regression/hypothesis-testing-significance-regression-line-slope/) for the coefficients and then compare the estimates to the null hypothesis that $\beta_1=0$, i.e., the hypothesis that there is no linear relationship between the variables.
 This would be a *parametric* test, because it relies on specific assumptions about the distribution of the responses in our linear regression model.
 
@@ -48,17 +48,16 @@ Don't worry too much if you don't fully understand this.
 Do note, however, that the process is very similar to how you would perform an ordinary $t$-test like you saw in STAT240.
 
 ```{r}
-# #TODO: uncomment code below and take note of slope estimate.
-# #Fist we run lm with mpg regressed on drat,
-# #data=mtcars.small means use columns from this data frame,
-# #then  extract coefficients from model
-# 
-# summary(lm(mpg ~ drat, data=mtcars.small))$coefficients
-# 2*(1-pt(5.096042,30))
-# 
-# # Code for extracting the coefficient beta_1
-# output <- lm( mpg ~ drat, data=mtcars.small) );
-# output$coefficients[2]
+#TODO: uncomment code below and take note of slope estimate.
+#Fist we run lm with mpg regressed on drat,
+data=mtcars.small # means use columns from this data frame,
+#then  extract coefficients from model
+summary(lm(mpg ~ drat, data=mtcars.small))$coefficients
+2*(1-pt(5.096042,30))
+ 
+# Code for extracting the coefficient beta_1
+output <- lm( mpg ~ drat, data=mtcars.small);
+output$coefficients[2]
 ```
 
 c) Another way you can estimate the significance of $\beta_1$ under the null hypothesis of $\beta_1=0$ is by (you guessed it!) permuting the data!
@@ -79,5 +78,15 @@ Write a function that performs $M$ iterations of the following:
    This is what happened in our COVID vaccine example in lecture!
 
 ```{r}
-### TODO: complete c here.
+slope <- data.frame()
+
+x_permutations <- data.frame(runif(n = 1000, min = -999, max = 999))
+
+y_values <- lm(mtcars$drat ~ mtcars$mpg, data = x_permutations)
+
+slope_mean <- 0
+ints <- c(int = 1:(1000-1))
+for(int in ints){
+  slope_mean = (slope_mean + (x_permutations[0][int+ 1] - x_permutations[0][int])/(y_values[int + 1] - y_values[int]))/int
+}
 ```
