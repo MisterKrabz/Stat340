@@ -1,0 +1,323 @@
+---
+title: "Homework 2"
+author: "Your Name Here"
+output: 
+  html_document:
+    self_contained: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T,eval=T,message=F,warning=F,fig.align='center')
+library(tidyverse)
+```
+
+## 1. Probability Warmup <small>(1pt each, 6pts total)</small>
+
+a. Consider $X\sim \text{Normal}(5, 2^2)$. Find $P(4 < X < 7)$
+```{r}
+pnorm(7, mean = 5, sd = 2) - pnorm(4, mean=5, sd = 2)
+```
+> .533
+
+b. For $X$ above, find the 75th percentile, i.e. find $q$ such that $P(X < q)=.75$
+```{r}
+qnorm(.75, mean = 5, sd = 2)
+```
+> 6.35
+
+c. Consider $Y\sim Geometric(.15)$. Find $P(Y \leq 5)$
+```{r}
+pgeom( 4, prob = .15)
+```
+> .556
+
+d. Consider $W \sim Poisson(8)$. Find $P(W \geq 13)$
+```{r}
+1 - ppois(12, lambda = 8)
+```
+> 064
+
+e. What is the 95th percentile for $W$? Is the probability less than this value exactly 95%? (If not, then why?)
+```{r}
+qpois(.95, 8, 13)
+```
+> 95th percentile: 13
+> Since poisson is a descrete distribution, it switches probabilities in solid intervals instead of a smooth curve, and therefore, the probability of being less than 13 is not exactly 95% but probably very close to 95%. 
+
+f. Assuming they are independent, what is the expected value and variance of $X+Y+W$?
+```{r}
+5 + 1/.15 + 8
+
+4 + (1 - .15)/.15^2 + 8
+```
+> value: 19.66
+> variance: 49.78 
+
+## 2. Choosing the best model <small>(1pt each, 7 pts total)</small>
+
+For each of the following scenarios, decide what random variable may be appropriate to use as a model, and explain your reasoning as well as any assumptions you make.
+
+a. The number of patients in an experimental drug trial that respond to treatment. 
+> binomial random variable. We are measuging the number of sucesses in a fixed number of trials. I am assuming we are not measuring this in a fixed interval of time so it is not a poisson distribution, and I am assuming we are going to have more than 1 trial in this experiment, meaning it is not a bernouli distribution. 
+
+b. The number of red cars you observe driving through an intersection between 10am and 11am. 
+> Poisson random variable. Since we are observing the number of sucesses in a fixed interval of time, it could not be any other distribution. I am assuming that the red car observanbces are independent of each other and there i snot a red car convention occuring nearby. 
+
+c. What the second hand reads on the clock when you wake up (without an alarm clock) from a long nap (approximately). 
+> descrete uniform random variable. assuming that you could be starting this nap at any time of the day at any level of sleepiness, we can say that the distribution of wake up times for this type of nap is uniformly distributed. 
+
+d. How many people you need to swipe right on Tinder before you get a match. 
+> geometric random variable. Since the last swipe in order to get the match requires for you to swipe, we are also counting this sucess as a trial and therefore we are not measuring the number of failures until the first sucess, which is why this is a geometric random variable. 
+
+e. The length of time between mosquito bites a camper experiences while on a hike. 
+> exponential rtandom variable. Assuming we are measuring the interval of time between mosquito bites, and the number of mosquito bites in a given amouint of time follows the poisson distribution, the waiting time between them is exponential. 
+
+f. Whether the Eagles win the Superbowl this year. 
+> bernoili random variable. this is because we are measuring a binbomial variable with just one trial, as the Eagles cannot win multiple times at the superbowl in one year. We are assuming that the probability of sucess is constant for this one trial that we are taking. 
+
+g. The GPA of a randomly selected UW-Madison graduate.
+> normal random variable. I am assuming that grade curves are all normally distributed for all classes, and therfore, the distribution of GPAs for uw madison students can be modeled with a normal distribution. 
+
+
+## 3. Mousetrap: A Rube Goldberg Machine  <small>(1pt each, 5pts total)</small>
+
+Consider the board game [Mousetrap](https://youtu.be/fOyq6Nc8660?si=WFJ-ldFsqsxg0Khx). When you trigger the trap, the ball needs to 
+
+1. roll down a **ramp**,
+2. be carried up by a **hammer**,
+3. roll  down another **ramp**,
+4. go down a bathtub **drain**,
+5. land on a **lever** which
+6. sends a diver into a **basin** which then
+7. causes the **trap** to descend.
+
+Suppose you can model the success of each component as independent Bernoulli random variables $X_1$ through $X_7$, where the probability of $X_i$ succeeding is $.90$ for each component (this is an arbitrary probability for this HW problem). 
+
+a. What is the probability that the trap works correctly from beginning to end?
+```{r}
+.9^7
+```
+> .478
+
+b. If you attempt the trap 15 times during a game, how many times do you expect it to work correctly from beginning to end?
+```{r}
+15 * .478
+```
+> 7 times 
+
+c. Suppose you let the marble go: Let $Y$ be the number of components of the trap that work in a row. If one component fails, then you stop counting. Calculate the probability mass function of $Y$. *Hints: $Y$ can have values $0, 1, 2, 3, 4, 5, 6$ or $7$. This is like a Geometric r.v. except it does not have infinite support. How can you use this fact to determine the pmf? Be careful: what is a 'success' in this context?*
+> X ~ Geom(.1)
+
+> X = 0: .1
+> X = 1: .09
+> X = 2: .081
+> X = 3: .073
+> X = 4: .066
+> X = 5: .059
+> X = 6: .053
+> X = 7: .478
+
+d. Calculate the expected value of $Y$ and its variance. 
+```{r}
+0 * .1 + 1 * .09 + 2 * .081 + 3 * .073 + 4 * .066 + 5 * .059 + 6 * .053 + 7 * .478
+
+(0-4.694)^2*.1 + (1-4.694)^2*.09 + (2-4.694)^2*.081 + (3-4.694)^2*.073 + (4-4.694)^2*.066 + (5-4.694)^2*.059 + (6-4.694)^2*.053 + (7-4.694)^2*.478
+```
+> expected value: 4.69
+> variance: 6.898
+
+e. What is $P(Y = 6 | Y \geq 3)$?
+```{r}
+.053/(.073+.066+.059+.053+.478)
+```
+> .0727
+
+## 4. Correlated Normal Random Variables <small>(2pts each, 10pts total)</small>
+
+Let $X$ and $Y$ be normally distributed random variables with $\mu_X=50$ and $\mu_Y=30$. Their covariance matrix given by 
+$$\Sigma = \left[\begin{matrix}100 & 75\\75 & 225\end{matrix}\right]$$
+In other words, $\sigma^2_X=10^2$, $\sigma^2_Y=15^2$ and $\rho_{XY}=.5$
+
+a. Using the rules of combining random variables, find the distribution of $X+Y$. (*hint: the sum of two normally distributed random variables will also follow a normal distribution*)
+> X ~ norm(mu = 80, sigma^2 = 475)
+
+b. Calculate $Pr[60 < X+Y < 90]$
+```{r}
+pnorm(90, mean = 80, sd = sqrt(475)) - pnorm(60, mean = 80, sd = sqrt(475))
+```
+> .497
+
+To simulate values from this distribution we can use the `mvrnorm` function in the MASS package. The following code will generate a dataframe with 10000 samples from this distribution.
+```{r}
+library(MASS)
+mu <- c(50,30)
+Sigma <- matrix(c(100,75,75,225), byrow=T, nrow=2)
+XYdata <- mvrnorm(10000, mu, Sigma)
+colnames(XYdata) <- c("X","Y")
+XYdata <- as.data.frame(XYdata)
+# un-comment the next line to plot the data
+ggplot(XYdata) + geom_point(aes(x=X, y=Y), pch=1)
+```
+
+c. Create a new column `W` that is `X+Y`. Using the values in this column, verify your answer for part a. using a histogram and calculating the mean and variance of $W$.
+```{r}
+XYdata$W <- XYdata$X + XYdata$Y
+
+mean(XYdata$W)
+var(XYdata$W)
+
+hist(XYdata$W, 
+     main = "Histogram for W = X+Y", 
+     xlab = "W", 
+     breaks = 50, ) 
+```
+
+d. Using the values in `W`, verify your answer for part b.
+> looks close enough, maybe some rounding difference 
+
+e. Using your simulated data, approximate an answer to $Pr(Y > 50 | X > 65)$.
+```{r}
+sum(XYdata$Y > 50 & XYdata$X > 65) / sum(XYdata$X > 65)
+```
+> .376
+
+## 5. The Geometric, The Poisson and the Exponential <small>(2pts each, 14pts total)</small>
+
+In this problem we'll explore the relationship between three random variable distributions.
+
+Suppose we're modeling an experiment where photons hit a glass plate. The average rate of collision is 90/second.
+
+a. What is the probability that 100 or fewer photons hit the plate in one hour?
+```{r}
+ppois(100, 3600*90)
+```
+> virtually 0
+
+b. What is the probability that it takes .03 or fewer seconds for the next photon to hit?
+```{r}
+pexp(0.03, rate = 90)
+```
+> .933
+
+c. What is the probability that it takes .001 milliseconds or fewer for the first collision?
+```{r}
+pexp(.001/1000, rate = 90)
+```
+> 8.999595e-05
+
+The following code will simulate the times between collisions in seconds.
+```{r}
+collision.s <- rexp(10000, 90)
+```
+
+Suppose we are counting collisions per second. The following code will count how many collisions occur during each second of the experiment.
+
+```{r}
+collision.count <- as.vector(table(floor(cumsum(collision.s))))
+```
+
+d. Plot a histogram of the `collision.count`. What is the mean number of collisions per second? In theory what should the distribution of `collision.count` be?
+```{r}
+count_df <- data.frame(counts = collision.count)
+
+# Plot the histogram using ggplot
+ggplot(count_df, aes(x = counts)) +
+  geom_histogram(bins = 30) +
+  labs(title = "Histogram of Collisions per Second",
+       x = "Number of Collisions",
+       y = "Frequency")
+
+mean(collision.count)
+```
+> 90.09
+
+Suppose we were to round to the nearest millisecond - to convert seconds to millseconds, multiply by 1000, and round to the nearest integer. In this sense, we could consider the data recorded as "counting how many milliseconds before the next collision". 
+
+e. Convert to milliseconds and save this vector as `collision.ms`. Plot a histogram of the milliseconds, and calculate the mean and variance. If you were to model the collision time (ms) as a geometric random variable, what parameter $p$ would you use? (*hint: the expected value of a geometric rv is $1/p-1$.*)
+```{r}
+collision.ms <- round(collision.s * 1000)
+ms_df <- data.frame(time_ms = collision.ms)
+
+# Plot the histogram using ggplot
+ggplot(ms_df, aes(x = time_ms)) +
+  geom_histogram(bins = 50, fill="lightblue", color="black") +
+  labs(title = "Histogram of Time Between Collisions (ms)",
+       x = "Time (milliseconds)",
+       y = "Frequency")
+
+mean(collision.ms)
+var(collision.ms)
+
+1 / (mean(collision.ms) + 1)
+```
+> mean: 11.077
+> variance: 121.431
+> p: .083
+
+f. If we record our data in milliseconds rather than seconds, what would the average number of collisions per millisecond be?  
+```{r}
+90/1000
+```
+> 0.09
+
+g. If you have $Y \sim Exp(\lambda)$, it turns out that the floor function $\lfloor{Y}\rfloor \sim Geom(1-e^{-\lambda})$. Check to see if $1-e^{-\lambda}$ is close to the $p$ you found earlier.
+```{r}
+lambda_ms <- 0.09
+
+1 - exp(-lambda_ms)
+```
+> 0.086 close enough 
+
+## 6. Random Variables in a Coffee Shop <small>(1pt each, 8pts total)</small>
+
+A small coffee shop records the number of customers arriving each morning between 8–9 a.m. They have noticed that:
+
+* On average, 12 customers arrive in that hour. The arrivals can be modeled as a Poisson random variable.
+
+* Each customer spends, on average, \$4.50 with a standard deviation of \$2.00. The spending per customer is independent and approximately follows a Normal distribution.
+
+Let $X$ be the number of customers who arrive between 8–9 a.m.
+
+a. Write down the distribution of $X$.
+> X ~ pois(l;ambda = 12)
+
+b. What is the probability that exactly 10 customers arrive in an hour?
+```{r}
+dpois(10, lambda = 12)
+```
+> .105
+
+c. What is the probability that at least 15 customers arrive in an hour?
+```{r}
+ppois(14, lambda = 12, lower.tail = FALSE)
+```
+> .228
+
+Let $Y$ be the spending of a single customer.
+ 
+d. State the distribution of $Y$.
+> Y ~ normal(mu  4.5, sigma^2 = 4)
+
+e. What is the probability a single customer spends more than $6?
+```{r}
+pnorm(6, mean = 4.5, sd = 2, lower.tail = FALSE)
+```
+> .227
+
+Now let $Z$ be the total revenue between 8–9 a.m.
+
+f. What is the expected value of $Z$?
+```{r}
+12*4.5
+```
+> $54
+
+g. What is the variance of $Z$? (*hint: $Z$ is a random sum: $Z=\sum_{i=1}^X Y_i$. The Variance of a random sum is $Var(Z)=EX\cdot VarY + VarX + E^2Y$*)
+```{r}
+48 + (12*20.25)
+```
+> 291
+
+h. Explain why the exact distribution of $Z$ is complicated. Suggest a method that could be used to approximate it.
+> Z is the sum of a random number of nromally distributed variabnles. Since X is also a random variable, I am not too sure what the distribution for Z would look like 
+

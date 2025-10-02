@@ -1,0 +1,124 @@
+---
+title: "STAT 340 Discussion 0: R review"
+output: html_document
+author: "patrick wang"
+---
+
+## XKCD comic
+
+We like to start discussion sections with a relevant XKCD comic (see
+[XKCD.com](xkcd.com) for lots more).
+
+<center><a href="https://xkcd.com/833/"><img id="comic" src="https://imgs.xkcd.com/comics/convincing.png" title="" style="width:555px;"></a></center>
+
+Today's exercises are intended as a review of basic R features and operations.
+
+## 1) Vector operations
+
+Remember that in R, if an operation works on a single number, it will usually
+also work entry-wise on a vector. For example, if you multiply a number by a
+vector, each entry in the vector will be multiplied by that number. If you
+multiply two vectors of the same length, the first number of both vectors will
+be multiplied, and the second number of both vectors will be multiplied, etc. A
+similar pattern will also work for functions like `exp()` or `pnorm()`. Applying
+a function like these to a vector will apply the function to every entry of the
+vector. Functions that do this are called *vectorized*.
+
+   a. Create a vector of the numbers 1 to 25 (try to do this without writing out each individual number). Multiply the vector by 2 to get a vector of all the even numbers less than or equal to 50.
+```{r}
+numbers <- 1:25
+2*numbers
+```
+   
+   b. Next, square this vector. Check that the entries of the result are the squares of the first 25 positive even numbers.
+```{r}
+numbers^2
+```
+   
+   c. Find the mean of this vector and subtract it from each element of the vector.
+```{r}
+numbers1 <- numbers - mean(numbers)
+
+```
+   
+   d. Using `>=`, compare this vector with 0 to show if each number is greater than or equal to 0. Use `sum()` on this resultant vector to count how many numbers satisfy this criterion. Alternatively, use `mean()` to get the proportion (think about why this works!).
+```{r}
+booleans <- numbers1 >= 0
+```
+   
+   e. Divide the interval $(0,1)$ into 15 evenly spaced numbers (**not including** 0 and 1). (Hint: see `?ppoints`). Then, use `qnorm()` to get a vector of 15 points evenly spaced out along the quantiles of the normal distribution. __Note:__ this is how you obtain the theoreticals for a [QQ-plot](https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot), which you may have seen in your intro classes.
+
+```{r}
+interval <- seq(from = 0, to = 1, by = 1/15)
+
+qnorm(interval)
+```
+
+
+## 2) Functions
+
+Functions are a useful way of creating a tool that can be used over and over
+again. Write a function for each of the following parts:
+
+1. Given an `n` and `k`, compute the binomial coefficient,
+
+$$\binom{n}{k} = \frac{ n! }{ (n-k)! k! }.$$
+You may assume that `n` and `k` are both integers and that $0 \le k \le n$.
+You may find the `factorial` function in R helpful. See `?factorial` for more information. Be careful that your function correctly handles cases like when $n=0$.
+
+**Note:** functions in R have different scope than the global environment. Read
+[this](https://www.geeksforgeeks.org/scope-of-variable-in-r/) for a helpful
+guide about this. Also note that declaring/updating a global variable from
+inside a function is considered bad practice, since it can easily introduce bugs
+that are very difficult to detect and fix. Avoid this if you can.
+
+2. Simulates rolling `n` 6-sided dice and gives the average of the outcomes. `n` should have a default value of 2.
+
+```{r}
+factorial(6)/(factorial(6-2)*factorial(2))
+```
+
+3. Manually (i.e. without using `sd()`) compute the sample standard deviation of a vector. Make sure you don't call this function `sd`-- pick something else!
+
+```{r}
+vector <- 1:10 
+
+sqrt((sum((vector-mean(vector))^2))/10)
+```
+
+## 3) Conditional executions
+
+It's important to be able to write clear and effective conditionals (if, else,
+etc...) in R. It's often very useful to check if a condition is satisfied and
+then do different things depending on the outcome.
+
+Briefly review sections 7.3-7.5 of [this
+page](https://discdown.org/rprogramming/conditional-execution.html#conditional-execution-if-else-statement).
+Then, write a function `is_even` (remember that thing about good function
+names?) that takes a single argument `n` (you may assume `n` is an integer), and
+returns `TRUE` if `n` is even and `FALSE` otherwise. **Hint:** `x %% y`, read "x
+modulo y", returns the remainder when dividing `x` by `y`. This is an easy way
+to check if a number is odd or even: a number $n$ is even if and only if n
+modulo 2 is zero.
+
+```{r}
+
+```
+
+## 4) For-loops
+
+For-loops are a useful way of repeating a step a set number of times.
+See [here](https://discdown.org/rprogramming/loops.html#for-loops) for a review.
+
+Write a function that repeats the following experiment `n` times (`n` should be the only argument to your function, and you may assume that `n` is a positive integer), with a default `n=1000`:
+
+   - draw 5 cards from a standard deck of playing cards (hint: for this problem, you can represent a deck as the vector 1,2,...,13 repeated 4 times)
+   - drop the lowest and highest card (if there are ties, just drop one of
+   the cards that are tied).
+   - take the mean of the remaining three numbers and stores them in a vector
+   - return the vector of means observed in the `n` repetitions of this experiment.
+   That is, you should be returning a vector of length `n`.
+   
+```{r}
+
+```

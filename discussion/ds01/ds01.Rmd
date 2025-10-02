@@ -1,0 +1,141 @@
+---
+title:  "STAT340 Discussion 2: Probability"
+output: html_document
+---
+
+## XKCD comic
+
+<center><a href="https://xkcd.com/1236/"><img src="https://imgs.xkcd.com/comics/seashell.png" id="comic"/></a></center>
+
+In this lab, we'll explore some fun and weird paradoxes and fallacies related to conditional probability along with some basic probability questions.
+
+------------------------------------------------------------------------
+
+### Answer the following.
+
+a. A box of chocolates contains six milk chocolates and four dark chocolates. Two of the milk chocolates and three of the dark chocolates have peanuts inside.  You randomly select and eat a chocolate.  Find the probability that it is a milk chocolate or has no peanuts inside.
+
+> p(milk | peanuts) = 9
+
+b. A paper bag contains 15 slips of paper. Eight of them are blue and are numbered from 1 to 8.  Seven of them are red and are numbered from 1 to 7. What is the probability of drawing a slip of paper with an even number?
+
+> 7/15
+
+c. Given events A and B, such that P(A) = 0.6,
+P(B) = 0.5, and P(A∪B) = 0.8. Determine whether A and B are independent or dependent.
+
+```{r}
+.6+.5-(.6*.5) 
+```
+> dependent 
+
+
+d. A magazine contains twelve pages. You open to a random page. What is the probability that the page number is eight or ten.
+
+> 2/12
+
+e. Students were surveyed as to which hand was used predominantly for writing. The choices were left-hand, right-hand, or ambidextrous (both hands used equally). Out of all male students, 15 were left-handed, 70 were right-handed and 9 were ambidextrous. On the other hand, 10 female students were left-handed, 90 were right-handed and 6 were ambidextrous. For the students surveyed, does this data suggest that gender and preferred writing hand are independent of each other?
+
+> Dependent 
+
+
+### Berkson's Paradox : Attractive people have worse personalities?
+
+Are attractive people more likely to be jerks? This is an observation some people make - it seems when going on a date with someone the more attractive they are the worse their personality seems to be. Why could this possibly be?
+
+This can be explained using conditional probability. Suppose that in the population, people's personalities take values (whole numbers) between 1 and 10, same goes for attractiveness and each personality/level of attractiveness has the same probability.
+
+```{r}
+#Build the population
+pop.size <- 100000
+
+#We can sample from 1 to 10 using the sample function 
+attractiveness <- sample(10, pop.size, replace = T)
+personality <- sample(10, pop.size, replace = T)
+dating.population <- data.frame(attractiveness,personality)
+```
+
+a. What is the correlation between attractiveness and personality in the population? You can use the cor function in R to calculate correlation.
+
+```{r}
+
+cor(attractiveness, personality)
+
+```
+
+
+b. Let's imagine a new dating app called "Datem" (get it?). The population using the app is representative of the overall population. When you view someone's profile you make some judgement about their personality as well as their attractiveness. Suppose you will only swipe right if the sum of their attractiveness and personality is at least 10. 
+
+Go through the population and create a subset who get a right swipe. You can use the subset(df, condition) function to do this easily in R. After you do, check the correlation between attractiveness and personality.
+
+```{r}
+
+subset(x = dating.population, dating.population$attractiveness + dating.population$personality >= 10)
+
+```
+
+
+
+c. Consider other standards (higher and lower) for the sum of these two traits. What is the correlation in the subset for others. Bonus: You could create a vector standard <- 2:19 and for each standard calculate the correlation, then plot the two variables to see the effect of someone's "Swipe Right" standard on the people they potentially get matched with.
+
+```{r}
+
+standard <- 2:19
+correlation <- rep(0, length(standard))
+for(std in standard){
+  swipe.right = subset(dating.population, (dating.population$attractiveness+dating.population$personality) >= std)
+  correlation[std-1] <- cor(swipe.right$personality, swipe.right$attractiveness)
+}
+plot(standard,correlation, type="l")
+
+```
+
+d. Big question: If it seems that when dating that attractive people tend to be jerks, is there another explanation for this?
+
+> I think when someone is more attractive they have higher standards for their partner which will cause their personality to seem saltier 
+
+### The Book Award
+
+Researchers have found that quality ratings for books that had won literary awards went down after the book won the award. This seems paradoxical, since people usually like books more if they know other people like them. 
+
+Imagine an author who has a cult following. Fans of this author love their books in general. A new book is published and the ratings received from fans can be modeled with a binomial random variable with mean $5\times 0.9$. When someone from the general public reads the book they give it a rating from a binomial random variable with mean $5 \times 0.5$.
+
+a. Suppose that for the first 5 months that 90% of the ratings come from fans of the author and only 10% come from people in the general public. What would the average star rating on Amazon be?
+
+```{r}
+.9 * (5*.9) + .1 * (5*.5)
+```
+> 4.3
+
+b. Then the book receives an award. This is big news and the readership changes as a lot of people buy the book because it is popular. Now 80% of the people who read the book are coming from the general public and only 20% are from the fanbase. What would the average star rating be now?
+
+```{r}
+.2 * (5*.9) + .8 * (5*.5)
+```
+
+
+### Base Rate Fallacy
+
+Suppose that we are living through a pandemic. Imagine that the hospitalization rate for those infected is 10% (if a person is infected, there's a 10% chance that they end up in the hospital). A vaccine is developed and if a person is vaccinated then their hospitalization rate drops to 0.5%.
+
+a. Early on only 5% of the population is vaccinated. What proportion of those hospitalized are vaccinated?
+
+```{r}
+(.05*.005)/(.05*.005 + .1 * .95)
+```
+
+b. Later on in the pandemic 25% of the population is vaccinated. What proportion of those hospitalized are vaccinated?
+
+```{r}
+(.25*.005)/(.25*.005 + .1 * .75)
+```
+
+c. Later on 90% of the population is vaccinated. What proportion of those hospitalized are vaccinated?
+
+```{r}
+(.9*.005)/(.9*.005 + .1 * .1)
+```
+
+d. You hear someone on the news saying that the proportion of those vaccinated in the hospital is rising and rising, and that this is evidence that the efficacy of the vaccine is diminishing. Do you agree with this argument, or is there an other explanation?
+
+> The explanation is that since more people are being vaccinated in general, the percent of people in the hospital that are vaccinated will inevitably rise and therefore the vaccine is not causing people to go to the hospital more often 

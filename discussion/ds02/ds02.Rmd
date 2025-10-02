@@ -1,0 +1,108 @@
+---
+title: "STAT 340 Discussion 02: Probability distribution"
+output: html_document
+author: "Write your names here"
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, error = TRUE)
+library(tidyverse)
+```
+
+## XKCD comic
+
+We like to start discussion sections with a relevant XKCD comic (see
+[XKCD.com](xkcd.com) for lots more).
+
+<center><a href="https://xkcd.com/12/"><img src="https://imgs.xkcd.com/comics/poisson.jpg" id="comic" style="width:555px;"/></a></center>
+
+Today's exercises are intended as a assignment on Probability distributions.
+
+## Problem 1
+
+### a) Suppose that you live in the time of a pandemic. Let say the probability of you catching the disease after meeting someone is P(D)=p, where 0<p<1. Let's say you meet `k` people before you catch the disease. Let X be the total number of people you meet before you catch the disease. Find the distribution of X.
+
+
+> P(X=k) = p*(1-p)^{k-1}
+
+
+### b) Make sure that the distribution you obtained in part a, is a probability distribution. Hint: Use the idea of a geometric sum below with a = p and r = 1-p. 
+
+$$S = a+ar+ar^2+\ldots = \frac{a}{1-r}$$
+
+> sum(P(X = x))
+
+### c) Assuming that p is 1/5, the lawmakers want to issue a limit to the number of people, that can attend the gathering. They want the numbers of attendees for any event to be less than or equal to *x*; where, $P(X \leq x) \geq 0.5$. Find *x*.
+
+```{r}
+1/5 = 0.5*(1-0.5)^x
+```
+
+
+### d) Which distribution does the above random variable follow? Hint: It's not one of the distributions discussed in class but it's name is present in your lecture slides?
+
+
+> TODO: your answer goes here.
+
+
+# 2) Random variables 
+
+### a)
+
+For each of the following, identify one or more random variables that can be used to model the outcome.
+
+-   The number of cars that pass your house in an hour.
+-   The number of times you need to try before you make a 3-point shot.
+-   The number of people in a clinical trial who recover after going through an experimental treatment.
+-   The number you get when rolling a 20-sided die.
+
+------------------------------------------------------------------------
+
+> 1. poisson 
+> 2. standard geometric 
+> 3. binomial 
+> 4. uniform 
+
+------------------------------------------------------------------------
+
+# 3) Demonstaring LLN and the idea behind Monte Carlo
+
+### a) Choose a type of discrete random variable from lecture (e.g. binomial, poisson, geometric, uniform, etc...) and write down what the theoretical mean of this particular distribution is (you can use the lecture slides or Wikipedia to get the expected value for your random variable if you don't know it off-hand).
+
+------------------------------------------------------------------------
+
+> binomial mean: n * p
+
+------------------------------------------------------------------------
+
+### b)nRandomly generate at least 1000 observations of the variable you chose (if your computer can generate more, go ahead!). Then, use the `running_mean()` function defined below to compute a running mean (i.e., the $k$-th entry of the output is the mean of the first $k$ numbers in the input).
+
+```{r}
+# do not change this code, this chunk defines the running average function and can be specified as cumulative sum / index of element
+running_mean <- function(vec) {
+   cumsum(vec) / seq_along(vec)
+}
+
+running_mean
+```
+
+```{r}
+# TODO: your code goes here.
+```
+
+Make a plot of this running mean using the `ggplot()`, and use `geom_hline()` to add a horizontal red line at your previously-computed theoretical mean. If you like (and it is slightly more convenient), you can use `plot` and `abline()` for this, instead.
+
+```{r}
+# TODO: your code goes here.
+```
+
+The law of large numbers (LLN) states that the sample mean of a large number of random variables will be close to the population mean (i.e., the expectation), and the sample mean will be closer to the population mean (on average) the larger the sample size is. Is your plot consistent with the Law of Large Numbers? Why or why not?
+
+------------------------------------------------------------------------
+
+> TODO: your answer goes here.
+
+------------------------------------------------------------------------

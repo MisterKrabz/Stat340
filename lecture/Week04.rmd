@@ -1,0 +1,39 @@
+---
+title: "week4"
+output: html_document
+date: "2025-09-22"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+> emperical rule using sampling: 68, 95, 99.7 rule for normal distributions 
+
+```{r}
+random_norm = rnorm(1e5)
+
+# 68
+sum(random_norm < 1 & random_norm > -1)/100000
+
+# 95
+sum(random_norm < 2 & random_norm > -2)/100000
+
+# 99.7
+sum(random_norm < 3 & random_norm > -3)/100000
+
+# 68
+pnorm(1) - pnorm(-1)
+```
+
+> X ~ exp(4), P(X < 2)
+
+```{r}
+pexp(2, 4)
+
+random_exp = rexp(1e5, 4)
+
+sum(random_exp > -Inf & random_exp < 2)/100000
+```
+
+

@@ -1,0 +1,262 @@
+---
+title: "Homework 1"
+author: "Patrick Wang"
+output: 
+  html_document:
+    self_contained: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T,eval=T,message=F,warning=F,fig.align='center')
+library(tidyverse)
+```
+
+
+## Probability Warmup<small>(9 points; 3 points each)</small>
+
+Here are a few probability exercises to get you warmed up.
+
+a. Suppose you have an uneven 6-sided die where the even numbers are equally likely to occur and the odd numbers are also equally likely. The expected value of the die is $3.75$. What is the probability of getting a 6?
+   (Hint: Let $p$ represent the probability of getting an even number, and represent the probability of the other numbers algebraically. Then derive an expression for the expected value, let it equal $3.75$, and solve. You can go back and check your work by plugging the result back into your original expressions and verify it works with R.)
+
+> 3pe + 3po = 1
+> po(1+3+5) + pe(2+4+6) = 3.75
+
+> P(6) = .25
+
+```{r}
+p_e = .75
+p_o = .25
+
+expected_value <- .25*((1+3+5)/3) + .75*((2+4+6)/3)
+expected_value
+```
+
+b. Give **two examples** of pairs of events that are mutually exclusive and explain why for each.
+
+> 1. the probability of a given person turning left at a given intersection versus the probability of a given person turning right at a given intersection. This is ME because when you go to this intersection, you can only turn left or right. It is impossible to do both at the same time. 
+
+> 2. the probability of me wearing my white shirt on a given day versus the probability of me wearing my black shirt on a given day. This is ME because since I can only wear one shirt a day, I cannot wear both be my black shirt and my white shirt at the same time. 
+
+c. Give **two examples** of pairs of events that are independent and explain why for each.
+
+> I flip a coin two times. These are independent events because the result of the first flip does not affect the results of the second flip. 
+
+> Getting a good nights rest versus Gordons having chicken at their salad bar. The probability of Gordons having chicken at their salad bar is not affected by the quality of my sleep. 
+
+## Bayes Rule with backyard animals <small>(9 points; 3 points each)</small>
+
+In my backyard I sometimes see a black squirrel and sometimes a hawk. I see the squirrel roughly 4/5 of days during the year (equal probability year round). I see a hawk 65% of days when the squirrel is present, and 15% of days when the squirrel is not present.
+
+a. Calculate the overall probability that I see only one of the two animals on a given day.
+
+> = P(H|Sc) + P(Hc|S) 
+
+>P(S) = .8
+>P(Sc) = .2
+>P(H|S) = .65
+>P(H|Sc) = .15
+
+>P(H & Sc) = P(H|Sc) * P(Sc) = .15*.2 = 0.03
+>P(Hc & S) = P(Hc|S) * P(S) = (1-0.65)*.8 = .28
+
+>.03 +.28 = .31
+
+b. What is the expected number of days in a year that I would not see either animal?
+>P(Hc|S) = .35
+>P(Hc|Sc) = .85
+
+>P(Hc & Sc) = P(Hc|Sc) * P(Sc) = .85*.2 = .17
+>.17*365 = 62.05
+
+>approx 62 days
+
+c. I post a really nice photo of the hawk to my social media (i.e. the hawk visits my yard). What is the probability that the squirrel also visits this day?
+>P(S|H) = P(S & H)/P(H)
+> P(S&H) = P(H|S) * P(S)
+
+> P(S|H) = (.65*.8)/((.65*.8) + .03)
+
+> .945
+
+## Independence of Events <small>(12 points; 3 points each)</small>
+
+A fair four-sided die (numbered 1,2,3 and 4) is rolled three times. Consider the following four events:
+
+A: "The sum is 6 or less"
+sum=3:
+111
+sum=4:
+112
+121
+211
+sum=5: 
+122
+212
+221
+113
+131
+311
+sum=6:
+222
+123
+132
+321
+312
+213
+231
+114
+141
+411
+```{r}
+possible_combos = 4^3
+less_than_6 = 20
+
+less_than_6/possible_combos
+```
+> .3125
+
+B: "The second roll is more than the first"
+first roll: 1
+234
+first roll: 2
+34
+first roll: 3
+4
+first roll 4: 
+none 
+```{r}
+(3/4+2/4+1/4+0/4)/4
+```
+> .375
+
+C: "The sum is odd"
+> 1/2
+
+D: "Exactly two of the rolls are the same"
+```{r}
+4*3*3/64
+```
+> 0.5625
+
+a. Are A and B independent?
+sum=3:
+111 = F
+sum=4:
+112 = F
+121 = T
+211 = F
+sum=5:
+122 = T
+212 = F
+221 = F
+113 = F
+131 = T
+311 = F
+sum=6:
+222 = F
+123 = T
+132 = T
+321 = F
+312 = F
+213 = F
+231 = T
+114 = F
+141 = T
+411 = F
+
+> P(B|A) = 7/20
+> P(B) = .375
+
+> not independent 
+
+b. Are C and D independent?
+> 1/2 * 9/16 = 9/32
+> 2*3*3/64 = 9/32
+> independent 
+
+c. Are B and C independent?
+> independent 
+
+d. Are B and D independent?
+> no b/c for 2 rolls to be the same, they can occur in these orders: AAB, ABA, BAA but since we are saying that the second roll is bigger than the first we eliminate the possibility of the AAB which means that they are dependent on each other 
+
+
+
+## Discrete Random Variable <small>(6 points; 2 points each)</small>
+
+a. Consider the CDF given below for random variable $Y$ 
+```{r}
+plot(x=0:6, y=c(0,.2,.3, .5, .8,.9,1), type="s", ylab="F(y)", xlab="y", main="cdf of Y")
+abline(h=seq(.1,.9,.1), lty=2, col="gray")
+```
+Express the pmf of $Y$ in the following R code (in other words, fill in the missing probabilities)
+```{r}
+py1 <- c(0,.2,.3, .5, .8,.9,1) - c(0, 0, .2, .3, .5, .8, .9)
+
+barplot(height=py1, names.arg=0:6, ylab="P(y)", xlab="y", main="pmf of Y")
+
+abline(h=seq(.1,.9,.1), lty=2, col="gray")
+```
+
+b. Calculate $E[Y]$ for the variable $Y$ in part a.
+```{r}
+0*0 + 1*0.2 + 2*0.1 + 3*0.2 + 4*0.3 + 5*0.1 + 6*0.1
+``` 
+> 3.3
+
+
+## Continuous Random Variable <small>(6 points; 3 points each)</small>
+
+Below you will find the plot of a probability density function for a random variable $X$.
+
+```{r, echo=FALSE}
+plot(x=c(0,1,1.00001,2,2.0001,3), y=c(.5,0,.5,.5,0,.5), type="l", ylab="density", xlab="x", main="pdf of X")
+```
+Using just geometry answer a and b:
+
+a. What is $Pr[X < 1]$?
+```{r}
+1*.5*1/2
+```
+> 0.25 
+
+b. What is $Pr[1.5 < X < 2.5]$
+```{r}
+.5*.5 + 1/2*.5*.25
+```
+> .3125
+
+## Stock Portfolio <small>(8 points, 2 points each)</small>
+
+Consider two stocks. Stock A has a mean annual return of 0.06 and a standard deviation of 0.03. Stock B has a mean annual return of 0.17 and a standard deviation of 0.13. Past data suggests that the prices have a correlation of -0.75.
+You have \$1000 to invest in a portfolio composed of these two stocks. 
+
+a. Suppose you invest \$500 in stock A and \$500 in stock B. What will be the expected return and the standard deviation of your portfolio (in dollars)? 
+*Hint:* $\text{SD}(aX+bY) = \sqrt{\text{Var}(aX+bY)}= \sqrt{a^2\text{Var}(X)+2ab\text{Cov}(X,Y)+b^2\text{Var}(Y)}$ and $\text{Cov}(X,Y)=\sigma_X \sigma_Y \rho_{XY}$
+```{r}
+.06 * 500 + .17 * 500
+
+sqrt( 500^2*0.03^2 + 
+       2*500*500*0.03*0.13*-.75 + 
+       500^2*0.13^2 )
+```
+> expected return: 115
+> sd: 54.66
+
+b. Give an expression for the standard deviation for a portfolio investing $\$x$ in stock A and $\$1000-x$ in stock B. 
+> sqrt(x^2*0.03^2 + 2*x*(1000-x)*0.03*0.13*-.75 + (1000-x)^2*0.13^2)
+
+c. Find the value $x$ that minimizes this standard deviation. 
+> x = 838.266
+
+d. What is the expected return and standard deviation (in dollars) for the portfolio split you chose in part c?
+```{r}
+.06 * 838.266 + .17 * (1000-838.266)
+
+sqrt( 838.266^2*0.03^2 + 
+       2*838.266*(1000-838.266)*0.03*0.13*-.75 + 
+       (1000-838.266)^2*0.13^2 )
+```
+> Expected Return: 77.79
+> Sd: 16.77
