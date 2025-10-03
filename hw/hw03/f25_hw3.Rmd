@@ -371,19 +371,21 @@ b. What is the density of your random variable $f(x)$ over the support?
 > 1/5
 
 c. Produce an auxiliary function $h(x)=g(x)/f(x)$
-```{r}
-
-```
-
+$$h(x)=\frac{g(x)}{f(x)}=\frac{\frac{sin(x^2)}{x}}{\frac{1}{5}}=\frac{5*sin(x)}{x}$$
 d. Simulate at least 10000 random values from your distribution you chose in part a.
 ```{r}
-
+n <- 1000000
+X <- runif(n, min = 0, max = 5)
+X
 ```
 
 e. Calculate the mean of $h(X)$.
 ```{r}
-
+h_X <- 5 * (sin(X^2) / X)
+integral_estimate <- mean(h_X)
+integral_estimate
 ```
+> .7668
 
 ## 6. Simulating a random variable  <small>(3pts each, 6pts total)</small>
 
@@ -417,24 +419,28 @@ This means that the cumulative distribution function is $$F_X(t)=\begin{cases}
 \end{cases}$$
 
 a.  Find $F^{-1}(x)$, the inverse CDF. *Hint: In `R` the `arc-cosine` function is `acos()`.*
+$$u = \frac{1}{4}(1-\cos(t))^2$$
+$$4u = (1-\cos(t))^2$$
+$$\sqrt{4u} = 1-\cos(t)$$
+$$\cos(t) = 1 - 2\sqrt{u}$$
+$$t = \arccos(1 - 2\sqrt{u})$$
+$$F_X^{-1}(u) = \arccos(1 - 2\sqrt{u})$$
 b. Write a function `rx(n)` (like `rbinom`) to sample from this random variable, where `n` is the size of the sample to be drawn. Then, use your function to draw sample of size 1000 and plot a histogram of the output to verify the results make sense. You can do this by un-commenting the two last lines of this chunk of code.
 
 ```{r}
 # complete the function
 rx = function(n) {
-  # TODO: code goes here
+  u <- runif(n)
+  samples <- acos(1 - 2 * sqrt(u))
+  return(samples)
 }
 
 # The histogram should look like the PDF we plotted above.
 # Un-comment the following lines of code and check it looks correct
 
-#hist(rx(10000), probability=TRUE, breaks=25)
-#lines(x=seq(0,pi,.01), y=pdf_x(seq(0,pi,.01)), col='red')
+hist(rx(10000), probability=TRUE, breaks=25)
+lines(x=seq(0,pi,.01), y=pdf_x(seq(0,pi,.01)), col='red')
 ```
-
-
-
-
 
 ## 7. Conditional Average Savings (for fun!)
 
@@ -445,5 +451,31 @@ That sounds good, but notice this is a conditional average. We are only looking 
 Suppose the savings can be modeled by a normal random variable $X\sim N(0, \sigma^2)$. For example, if $x=50$ that means a customer saves \$50. If $X<0$ that indicates they would be spending *more* money on insurance with Fauxgressive.
 
 a. Using Monte Carlo simulation, if $\sigma^2=500^2$, estimate $E(X | X>0)$
+```{r}
+set.seed(42)
+
+n <- 1000000
+
+mu <- 0
+sigma_a <- 500
+
+all_savings <- rnorm(n, mean = mu, sd = sigma_a)
+
+positive_savings <- all_savings[all_savings > 0]
+
+mean_a <- mean(positive_savings)
+mean_a
+```
+> 399.209
 
 b. What would $\sigma^2$ be for $E(X | >0) \approx 550$?
+```{r}
+mean_b <- 550
+
+sigma_b <- sigma_a * (mean_b / mean_a)
+
+sigma_squared_b <- sigma_b^2
+
+sigma_squared_b
+```
+> 474531.3
