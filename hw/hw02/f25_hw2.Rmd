@@ -1,6 +1,6 @@
 ---
 title: "Homework 2"
-author: "Your Name Here"
+author: "Patrick Wang"
 output: 
   html_document:
     self_contained: yes
@@ -35,7 +35,7 @@ d. Consider $W \sim Poisson(8)$. Find $P(W \geq 13)$
 ```{r}
 1 - ppois(12, lambda = 8)
 ```
-> 064
+> .064
 
 e. What is the 95th percentile for $W$? Is the probability less than this value exactly 95%? (If not, then why?)
 ```{r}

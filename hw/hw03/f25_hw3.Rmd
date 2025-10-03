@@ -235,12 +235,32 @@ ggplot(df, aes(x = n, y = xbar)) +
 ## 3. Estimating $E(g(X))$  <small>(2pts each, 6pts total)</small>
 
 Let $X$ be a normally distributed random variable, $X\sim N(2, 1^2)$. Use Monte Carlo simulation to estimate the following:
+```{r}
+set.seed(42)
+
+n <- 1000000
+
+X <- rnorm(n, mean = 2, sd = 1)
+```
+
 
 a. $E(X^3)$
+```{r}
+mean(X^3)
+```
+> 14.016
 
 b. $E(\sin(X))$
+```{r}
+mean(sin(X))
+```
+> .551
 
 c. $E(e^X)$
+```{r}
+mean(exp(X))
+```
+> 12.192
 
 
 
