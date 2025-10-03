@@ -124,23 +124,16 @@ d. What is the average distance on a disc of radius 1 to its center? (hint: One 
 ```{r}
 n_reps <- 10000000
 
-# Generate points in a bounding square and reject those outside the circle.
-# The area of the circle is pi, the area of the square is 4. The acceptance
-# rate is pi/4 (~78.5%), so we need to generate more points than n_reps.
-# We will generate n_reps / (pi/4) to be safe.
 n_generate <- as.integer(n_reps * 4 / pi)
 
 x_square <- runif(n = n_generate, min = -1, max = 1)
 y_square <- runif(n = n_generate, min = -1, max = 1)
 
-# Keep only the points that fall within the disc (x^2 + y^2 <= 1)
 dist_sq_from_center <- x_square^2 + y_square^2
 points_inside <- dist_sq_from_center[dist_sq_from_center <= 1]
 
-# Trim down to the desired number of points, just in case we have extra
 points_inside <- points_inside[1:n_reps]
 
-# The distance is the square root of the squared distance
 distances <- sqrt(points_inside)
 
 mean(distances)
@@ -230,19 +223,14 @@ ggplot(df, aes(x = n, y = xbar)) +
 ```
 > This output is exactly what I was expecting. The expected value is 0. It provides a clear demonstration of the Law of Large Numbers, which states that the average of the results obtained from a large number of trials should be close to the expected value. The plot confirms this for the Standard Normal distribution, just as the previous plots. 
 
-
-
 ## 3. Estimating $E(g(X))$  <small>(2pts each, 6pts total)</small>
 
 Let $X$ be a normally distributed random variable, $X\sim N(2, 1^2)$. Use Monte Carlo simulation to estimate the following:
 ```{r}
-set.seed(42)
-
 n <- 1000000
 
 X <- rnorm(n, mean = 2, sd = 1)
 ```
-
 
 a. $E(X^3)$
 ```{r}
@@ -262,9 +250,6 @@ mean(exp(X))
 ```
 > 12.192
 
-
-
-
 ## 4. How Many Billies Can Fit? <small>(2pts each, 10pts total)</small>
 
 You have an empty wall That is exactly 242 cm wide (with walls on either side). You see that Billy the Bookcase (https://www.ikea.com/us/en/p/billy-bookcase-white-00263850/) is 80cm wide, so you should be able to fit 3 in this space.
@@ -272,10 +257,94 @@ You have an empty wall That is exactly 242 cm wide (with walls on either side). 
 Suppose, however that The width of Billy is actually 80cm **on average**. In fact, the width is a normal random variable with a mean of 80 and a standard deviation of .9cm. (Please note - this is fictional! Ikea would never let quality control slip this bad). Use Monte Carlo simulation to answer the following questions:
 
 a. Estimate the expected value and standard deviation for the **total width** of the 3 Billys.
+```{r}
+n <- 1000000
+
+mean_width <- 80
+sd_width <- 0.9
+
+billy_1 <- rnorm(n, mean = mean_width, sd = sd_width)
+billy_2 <- rnorm(n, mean = mean_width, sd = sd_width)
+billy_3 <- rnorm(n, mean = mean_width, sd = sd_width)
+
+total_width <- billy_1 + billy_2 + billy_3
+
+mean(total_width)
+
+sd(total_width)
+```
+> expected value: 239.999 
+> sd: 1.560
+
 b. If you buy 3 Billys, what is the probability that they will fit in the space? Assume Billys are independent.
+```{r}
+wall_space <- 242
+
+fit_count <- sum(total_width <= wall_space)
+
+fit_count / n
+```
+> .900
+
 c. How wide of a space would you need to be 99% sure that 3 Billys would fit? *Hint: Use the `quantile` function in R*
+```{r}
+quantile(total_width, 0.99)
+```
+> 243.631
+
 d. There are two other bookcases made by knockoff brand "Iqueeya": Goat and Gruff. Goat bookcase widths are normally distributed with a mean of 79cm and a standard deviation of .5cm, while Gruff bookcase widths are normally distributed with a mean of 81cm and a standard deviation of .5cm. What is the probability that a Billy, a Goat and a Gruff will fit on your wall? (Assume independence)
+```{r}
+goat_mean <- 79
+goat_sd <- 0.5
+gruff_mean <- 81
+gruff_sd <- 0.5
+
+billy_for_d <- rnorm(n, mean = mean_width, sd = sd_width)
+goat_for_d <- rnorm(n, mean = goat_mean, sd = goat_sd)
+gruff_for_d <- rnorm(n, mean = gruff_mean, sd = gruff_sd)
+
+total_width_combo <- billy_for_d + goat_for_d + gruff_for_d
+
+sum(total_width_combo <= wall_space) / n
+```
+> probability of both: .959788
+
 e. Suppose you want the amount of gap between the bookcases and the side walls to be **as small as possible**. You assess how good of a fit you have by scoring: Buying 3 bookcases gives you a score of 0 if they don't fit, but otherwise a score of $$\frac{\text{total width}}{242}\times 100.$$ What combination of Billys, Goats and Gruffs gives you the highest *expected score*?
+```{r}
+get_expected_score <- function(total_widths, space) {
+  scores <- (total_widths / space * 100) * (total_widths <= space)
+  
+  mean(scores)
+}
+
+b1 <- rnorm(n, mean = mean_width, sd = sd_width)
+b2 <- rnorm(n, mean = mean_width, sd = sd_width)
+b3 <- rnorm(n, mean = mean_width, sd = sd_width)
+
+g1 <- rnorm(n, mean = goat_mean, sd = goat_sd)
+g2 <- rnorm(n, mean = goat_mean, sd = goat_sd)
+g3 <- rnorm(n, mean = goat_mean, sd = goat_sd)
+
+r1 <- rnorm(n, mean = gruff_mean, sd = gruff_sd)
+r2 <- rnorm(n, mean = gruff_mean, sd = gruff_sd)
+r3 <- rnorm(n, mean = gruff_mean, sd = gruff_sd)
+
+scores <- c(
+  `3 Billys` = get_expected_score(b1 + b2 + b3, wall_space),
+  `3 Goats` = get_expected_score(g1 + g2 + g3, wall_space),
+  `3 Gruffs` = get_expected_score(r1 + r2 + r3, wall_space),
+  `2 Billys, 1 Goat` = get_expected_score(b1 + b2 + g1, wall_space),
+  `2 Billys, 1 Gruff` = get_expected_score(b1 + b2 + r1, wall_space),
+  `1 Billy, 2 Goats` = get_expected_score(b1 + g1 + g2, wall_space),
+  `1 Billy, 2 Gruffs` = get_expected_score(b1 + r1 + r2, wall_space),
+  `2 Goats, 1 Gruff` = get_expected_score(g1 + g2 + r1, wall_space),
+  `1 Goat, 2 Gruffs` = get_expected_score(g1 + r1 + r2, wall_space),
+  `1 Billy, 1 Goat, 1 Gruff` = get_expected_score(b1 + g1 + r1, wall_space)
+)
+
+scores
+```
+
 
 ```{r, echo=FALSE}
 # The scoring function is provided for you. 
@@ -286,10 +355,6 @@ score <- function(width){
   return(mean(scores))
 }
 ```
-
-
-
-
 
 ## 5. Integration by darts <small>(2pts each, 10pts total)</small>
 
