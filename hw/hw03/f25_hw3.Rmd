@@ -362,17 +362,28 @@ Use Monte Carlo estimation to approximate the integral
 $$\int_0^5 \frac{\sin(x^2)}{x} dx$$
 
 a. Choose a random variable that has a support that is exactly the same as the region of integration.
+> X ~ Uniform(0,5)
 
 b. What is the density of your random variable $f(x)$ over the support?
+```{r}
+1/(5-0)
+```
+> 1/5
 
 c. Produce an auxiliary function $h(x)=g(x)/f(x)$
+```{r}
+
+```
 
 d. Simulate at least 10000 random values from your distribution you chose in part a.
+```{r}
+
+```
 
 e. Calculate the mean of $h(X)$.
+```{r}
 
-
-
+```
 
 ## 6. Simulating a random variable  <small>(3pts each, 6pts total)</small>
 
