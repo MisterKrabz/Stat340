@@ -44,19 +44,20 @@ d. Calculate the $p$-value, the proportion of simulated test statistics greater 
 count = 0
 data <- read.csv("./../../data/wally_sales.csv")
 
-mean(data)
+
 
 for(i in 1:10000){
-  if(x[i] >= 25){
+  if(x[i] >= mean(data$sales)){
     count = count + 1;
   }
 }
 
 count/10000
 ```
+> p-value: 0.0278
 
 e. Interpret the $p$-value and state your conclusion.
-> p = 0.5086 (which is less than alpha = 0.05). We fail to reject the null hypothesis. There is no statistically significant evidence that he gets more sales with consulting as compared to without consulting. 
+> p = 0.0278 < 0.05 = alpha, reject H0. We have statistically significant evidence showing that he gets more sales with consulting as compared to without consulting. 
 
 ## Problem 2. A Data Scientist Referees Ping Pong <small>(8pts total)</small>
 
