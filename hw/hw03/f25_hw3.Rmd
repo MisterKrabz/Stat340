@@ -21,6 +21,7 @@ Use Monte Carlo simulation to estimate the following geometric properties of sha
 
 a. What is the the average distance between two uniformly random points in a box with side lengths 4, 6 and 10?
 ```{r}
+set.seed(2025)
 reps <- 1:10000000
 
 L <- 4
@@ -35,11 +36,7 @@ p2_x <- runif(n = reps, min = 0, max = L)
 p2_y <- runif(n = reps, min = 0, max = W)
 p2_z <- runif(n = reps, min = 0, max = H)
 
-dx <- (p1_x - p2_x)^2
-dy <- (p1_y - p2_y)^2
-dz <- (p1_z - p2_z)^2
-
-distances <- sqrt(dx + dy + dz)
+distances <- sqrt((p1_x - p2_x)^2 + (p1_y - p2_y)^2 + (p1_z - p2_z)^2)
 
 mean(distances)
 ```
@@ -47,45 +44,26 @@ mean(distances)
 
 b. Three points uniformly at random are selected on a circle with radius 1. What is the average area of the triangle formed?
 ```{r}
-n_reps <- 10000000
+set.seed(2025)
+n_reps <- 1e6
 
-R <- 1
+theta1 <- runif(n_reps, 0, 2*pi)
+theta2 <- runif(n_reps, 0, 2*pi)
+theta3 <- runif(n_reps, 0, 2*pi)
 
-x_raw1 <- rnorm(n = n_reps, mean = 0, sd = 1)
-y_raw1 <- rnorm(n = n_reps, mean = 0, sd = 1)
+x1 <- cos(theta1); y1 <- sin(theta1)
+x2 <- cos(theta2); y2 <- sin(theta2)
+x3 <- cos(theta3); y3 <- sin(theta3)
 
-mag1 <- sqrt(x_raw1^2 + y_raw1^2)
-
-x1 <- R * x_raw1 / mag1
-y1 <- R * y_raw1 / mag1
-
-x_raw2 <- rnorm(n = n_reps, mean = 0, sd = 1)
-y_raw2 <- rnorm(n = n_reps, mean = 0, sd = 1)
-mag2 <- sqrt(x_raw2^2 + y_raw2^2)
-x2 <- R * x_raw2 / mag2
-y2 <- R * y_raw2 / mag2
-
-x_raw3 <- rnorm(n = n_reps, mean = 0, sd = 1)
-y_raw3 <- rnorm(n = n_reps, mean = 0, sd = 1)
-mag3 <- sqrt(x_raw3^2 + y_raw3^2)
-x3 <- R * x_raw3 / mag3
-y3 <- R * y_raw3 / mag3
-
-base_length <- sqrt((x1 - x2)^2 + (y1 - y2)^2)
-
-height_numerator <- abs((x2 - x1) * (y1 - y3) - (x1 - x3) * (y2 - y1))
-height <- height_numerator / base_length
-
-height[is.nan(height)] <- 0
-
-areas <- 0.5 * base_length * height
+areas <- 0.5 * abs(x1*(y2 - y3) + x2*(y3 - y1) + x3*(y1 - y2))
 
 mean(areas)
 ```
-> .478
+> .477
 
 b. Three points uniformly at random are selected on a circle with radius 1. What is the expected perimeter of the triangle formed?
 ```{r}
+set.seed(2025)
 n_reps <- 10000000
 
 R <- 1
@@ -123,22 +101,23 @@ mean(perimeters)
 d. What is the average distance on a disc of radius 1 to its center? (hint: One way to get points uniformly distributed over a circle is to pick points from a square and if they are not in the circle just pick again).
 ```{r}
 n_reps <- 10000000
+set.seed(2025)
 
-n_generate <- as.integer(n_reps * 4 / pi)
+n_generate <- as.integer(n_reps * 4 / pi) 
 
-x_square <- runif(n = n_generate, min = -1, max = 1)
-y_square <- runif(n = n_generate, min = -1, max = 1)
+x_square <- runif(n_generate, min = -1, max = 1)
+y_square <- runif(n_generate, min = -1, max = 1)
 
 dist_sq_from_center <- x_square^2 + y_square^2
-points_inside <- dist_sq_from_center[dist_sq_from_center <= 1]
+inside_idx <- dist_sq_from_center <= 1
 
-points_inside <- points_inside[1:n_reps]
+distances <- sqrt(dist_sq_from_center[inside_idx])
 
-distances <- sqrt(points_inside)
+distances <- distances[seq_len(min(n_reps, length(distances)))]
 
 mean(distances)
 ```
-> .667
+> .666
 
 
 ## 2. Law of Large Numbers  <small>(2pts each, 10pts total)</small>
@@ -147,6 +126,7 @@ For this next problem, we're going to empirically demonstrate the law of large n
 
 a. Start by creating a data frame with 2 columns: a column named `n` that goes from 1, 2, ..., up to 1000; and a second column named `x` which is just 1000 repeated observations of a Poisson random variable with `lambda=13`.
 ```{r}
+set.seed(2025)
 n <- 1:1000
 x <- rpois(n = 1000, lambda = 13)
 df <- data.frame(n, x)
@@ -155,7 +135,7 @@ df <- data.frame(n, x)
 b. Next, create a third column named `xbar` that computes the "mean-thus-far" up to each row. E.g. if the first 3 values of `x` are 3, 1, 8, then the first 3 values of `xbar` should be 3, 2, 4, since 3=3, (3+1)/2=2, and (3+1+8)/3=4.
    (Hint: use the `cumsum()` function to take the cumulative sum of the `x` column, then divide by the number of observations so far)
 ```{r}
-n <- 1:1000
+set.seed(2025)
 x <- rpois(n = 1000, lambda = 13)
 xbar <- 1:1000
 
@@ -169,18 +149,19 @@ ggplot(df, aes(x = n, y = xbar)) +
   geom_line(color = "dodgerblue") + 
   geom_hline(yintercept = 13, color = "red", linetype = "dashed", linewidth = 1) +  
   labs(
-    title = "Law of Large Numbers",
+    title = "Law of Large Numbers (Poisson with λ=13)",
     x = "Number of Observations (n)",
     y = "Sample Mean (xbar)"
   ) +
-  theme_minimal() + 
-  theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5))
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 
 d. Now, increase the number of simulations to 100,000 and remake the plot, this time with a log-scale x-axis to better show the rate of convergence across the entire axis. Comment again on the output. Explain if this does or does not empirically agree with the law of large numbers.
 ```{r}
 n <- 1:100000
+set.seed(2025)
 x <- rpois(n = 100000, lambda = 13)
 df <- data.frame(n, x)
 
@@ -203,6 +184,7 @@ e. Repeat the above steps with a **different** random variable. You can copy you
 ```{r}
 theoretical_mean <- 0
 n <- 1:100000
+set.seed(2025)
 x <- rnorm(n = 100000, mean = 0, sd = 1)
 
 df <- data.frame(n, x)
@@ -221,14 +203,14 @@ ggplot(df, aes(x = n, y = xbar)) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5))
 ```
-> This output is exactly what I was expecting. The expected value is 0. It provides a clear demonstration of the Law of Large Numbers, which states that the average of the results obtained from a large number of trials should be close to the expected value. The plot confirms this for the Standard Normal distribution, just as the previous plots. 
+> This output is what I was expecting. The expected value is 0. It shows the Law of Large Numbers, which states that the average of the results obtained from a large number of trials should be close to the expected value. The plot confirms this for the Standard Normal distribution, just as the previous plots. 
 
 ## 3. Estimating $E(g(X))$  <small>(2pts each, 6pts total)</small>
 
 Let $X$ be a normally distributed random variable, $X\sim N(2, 1^2)$. Use Monte Carlo simulation to estimate the following:
 ```{r}
 n <- 1000000
-
+set.seed(2025)
 X <- rnorm(n, mean = 2, sd = 1)
 ```
 
@@ -236,19 +218,19 @@ a. $E(X^3)$
 ```{r}
 mean(X^3)
 ```
-> 14.016
+> 13.980
 
 b. $E(\sin(X))$
 ```{r}
 mean(sin(X))
 ```
-> .551
+> .552
 
 c. $E(e^X)$
 ```{r}
 mean(exp(X))
 ```
-> 12.192
+> 12.163
 
 ## 4. How Many Billies Can Fit? <small>(2pts each, 10pts total)</small>
 
@@ -259,6 +241,7 @@ Suppose, however that The width of Billy is actually 80cm **on average**. In fac
 a. Estimate the expected value and standard deviation for the **total width** of the 3 Billys.
 ```{r}
 n <- 1000000
+set.seed(2025)
 
 mean_width <- 80
 sd_width <- 0.9
@@ -274,7 +257,7 @@ mean(total_width)
 sd(total_width)
 ```
 > expected value: 239.999 
-> sd: 1.560
+> sd: 1.569
 
 b. If you buy 3 Billys, what is the probability that they will fit in the space? Assume Billys are independent.
 ```{r}
@@ -284,13 +267,13 @@ fit_count <- sum(total_width <= wall_space)
 
 fit_count / n
 ```
-> .900
+> .901
 
 c. How wide of a space would you need to be 99% sure that 3 Billys would fit? *Hint: Use the `quantile` function in R*
 ```{r}
 quantile(total_width, 0.99)
 ```
-> 243.631
+> 243.619
 
 d. There are two other bookcases made by knockoff brand "Iqueeya": Goat and Gruff. Goat bookcase widths are normally distributed with a mean of 79cm and a standard deviation of .5cm, while Gruff bookcase widths are normally distributed with a mean of 81cm and a standard deviation of .5cm. What is the probability that a Billy, a Goat and a Gruff will fit on your wall? (Assume independence)
 ```{r}
@@ -307,7 +290,7 @@ total_width_combo <- billy_for_d + goat_for_d + gruff_for_d
 
 sum(total_width_combo <= wall_space) / n
 ```
-> probability of both: .959788
+> probability of both: .9599
 
 e. Suppose you want the amount of gap between the bookcases and the side walls to be **as small as possible**. You assess how good of a fit you have by scoring: Buying 3 bookcases gives you a score of 0 if they don't fit, but otherwise a score of $$\frac{\text{total width}}{242}\times 100.$$ What combination of Billys, Goats and Gruffs gives you the highest *expected score*?
 ```{r}
@@ -371,10 +354,11 @@ b. What is the density of your random variable $f(x)$ over the support?
 > 1/5
 
 c. Produce an auxiliary function $h(x)=g(x)/f(x)$
-$$h(x)=\frac{g(x)}{f(x)}=\frac{\frac{sin(x^2)}{x}}{\frac{1}{5}}=\frac{5*sin(x)}{x}$$
+$$h(x)=\frac{g(x)}{f(x)}=\frac{\frac{sin(x^2)}{x}}{\frac{1}{5}}=\frac{5*sin(x^2)}{x}$$
 d. Simulate at least 10000 random values from your distribution you chose in part a.
 ```{r}
 n <- 1000000
+set.seed(2025)
 X <- runif(n, min = 0, max = 5)
 X
 ```
@@ -385,7 +369,7 @@ h_X <- 5 * (sin(X^2) / X)
 integral_estimate <- mean(h_X)
 integral_estimate
 ```
-> .7668
+> .7666
 
 ## 6. Simulating a random variable  <small>(3pts each, 6pts total)</small>
 
@@ -429,6 +413,7 @@ b. Write a function `rx(n)` (like `rbinom`) to sample from this random variable,
 
 ```{r}
 # complete the function
+set.seed(2025)
 rx = function(n) {
   u <- runif(n)
   samples <- acos(1 - 2 * sqrt(u))
@@ -452,7 +437,7 @@ Suppose the savings can be modeled by a normal random variable $X\sim N(0, \sigm
 
 a. Using Monte Carlo simulation, if $\sigma^2=500^2$, estimate $E(X | X>0)$
 ```{r}
-set.seed(42)
+set.seed(2025)
 
 n <- 1000000
 
@@ -466,7 +451,7 @@ positive_savings <- all_savings[all_savings > 0]
 mean_a <- mean(positive_savings)
 mean_a
 ```
-> 399.209
+> 398.323
 
 b. What would $\sigma^2$ be for $E(X | >0) \approx 550$?
 ```{r}
@@ -478,4 +463,4 @@ sigma_squared_b <- sigma_b^2
 
 sigma_squared_b
 ```
-> 474531.3
+> 476644.9
