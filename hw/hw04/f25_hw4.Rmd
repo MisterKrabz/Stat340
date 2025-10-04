@@ -100,20 +100,24 @@ x = 0
 set.seed(2025)
 
 for(i in 1:10000){
-  x = x + playPingPong()
+  if(playPingPong() >= 6){
+    x = x + 1
+  }
+  
 }
 
 x / 10000
 ```
-
+> p = 0.407
 
 c. (2 points) How do you conclude? Is this one game sufficient evidence that Bacchus is the superior Ping Pong Player?
-
+> p = 0.407 > 0.05 = alpha, fail to reject H0. We do not have statistically significant evidence that Bacchus is the superior Ping Pong Player 
 
 
 ## Problem 3. Quality or Quantity? <small>(8pts total)</small> 
 
 **Nifty Grifty**, a local restaurant recently had an art contest where any child under the age of 12 could submit a drawing. Submissions were accepted during the month of September The restaurant owner then looked at all submissions and the top 10 drawings were put on display. Kids were allowed to submit more than one drawing. When the winners were announced some customers were surprised that half of the 10 winners were the same kid, Paulo Pizzaco! He was even interviewed on Channel 3, lauded as an artistic prodigy.
+
 
 When looking at the submissions, however, you notice that among the 150 drawings submitted that 30 of them were from Paulo. It seems he submitted a new drawing every day of the month!
 
