@@ -118,7 +118,6 @@ c. (2 points) How do you conclude? Is this one game sufficient evidence that Bac
 
 **Nifty Grifty**, a local restaurant recently had an art contest where any child under the age of 12 could submit a drawing. Submissions were accepted during the month of September The restaurant owner then looked at all submissions and the top 10 drawings were put on display. Kids were allowed to submit more than one drawing. When the winners were announced some customers were surprised that half of the 10 winners were the same kid, Paulo Pizzaco! He was even interviewed on Channel 3, lauded as an artistic prodigy.
 
-
 When looking at the submissions, however, you notice that among the 150 drawings submitted that 30 of them were from Paulo. It seems he submitted a new drawing every day of the month!
 
 What do you think? Is the contest evidence of the quality of his work, or a consequence of the quantity of his submissions?
@@ -126,6 +125,7 @@ What do you think? Is the contest evidence of the quality of his work, or a cons
 Take the null hypothesis to be that any of the 150 considered drawings could be included in the top 10 with equal likelihood. How likely under this model would we see 5 (or more) of Paulo's drawings in the top 10? What do you conclude? 
 
 Proceed by treating this as a formal hypothesis test. Define the null and alternative hypotheses, define your test statistic, produce a distribution of simulated test statistics from the null model and finish by calculating a *p*-value and providing your own interpretation.
+
 
 
 
@@ -139,6 +139,32 @@ after  = c(4,2,4,2,1,2,1,7,3,1,4,3,2,4,4,1,1,2,3,4,4,5,5,4,3,2,9,3,4,4)
 ```
 
 a) (4 points) Use a permutation test to assess the claim that installation of the new part *changed* the prevalence of defects. That is, test the null hypothesis that the distribution of defects is the same before and after installation of the new part. Produce a $p$-value and interpret the results of your test in context.
+```{r}
+observed_diff <- mean(after) - mean(before)
+observed_diff
+
+set.seed(2025)
+
+all_defects <- c(before, after)
+n_before <- length(before) 
+n_after <- length(after)
+
+run_one_permutation <- function() {
+  shuffled_labels <- sample(all_defects)
+  
+  new_before <- shuffled_labels[1:n_before]
+  new_after <- shuffled_labels[(n_before + 1):(n_before + n_after)]
+  
+  return(mean(new_after) - mean(new_before))
+}
+
+simulated_diffs <- replicate(10000, run_one_permutation())
+
+extreme_count <- sum(abs(simulated_diffs) >= abs(observed_diff))
+
+p_value <- extreme_count / 10000
+p_value
+```
 
 b) (4 points) Explain, briefly, what you did above and why. Imagine that you are trying to explain to someone who isn't well versed in statistics what exactly you are doing in a permutation test. Explain your conclusion based on your test above. Three to five sentences should be plenty, but you are free to write as much or as little as you think is necessary to clearly explain your findings.
 
