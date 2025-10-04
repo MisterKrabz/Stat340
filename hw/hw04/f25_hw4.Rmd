@@ -1,0 +1,158 @@
+---
+title: "Homework 4"
+author: "Your name here"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T,eval=T,message=F,warning=F,fig.align='center')
+library(tidyverse)
+
+
+```
+
+
+## Problem 1. Wally's Customers <small>(10pts total; 2pts each)</small>
+
+Wally's Wicker Wonderland sells wicker furniture. The number of customers who make a purchase every day averaged 25/day over the past few months. In hopes of driving up sales, Wally hired a marketing firm. He wants to see if the average number of sales per day has truly increased from the previous average of 25/day. Over the past 15 days the number of purchases per day was recorded (see the data file `wally_sales.csv`).  Looking at the data, it's clear that the mean is greater than 25. The question Wally wishes to answer is whether this is convincing evidence of a TRUE effect of the marketing team, or could this be attributed to just chance (3 good weeks).
+
+a. State the null and alternative hypotheses. 
+> h0: numSales = 25/day
+> Ha: numSales > 25/day
+
+b. What random variable is most appropriate to use to model the number of sales per day? State the precise distribution under the null hypothesis (if needed estimate any missing parameters using the data).
+> poisson random variable 
+> X ~ Poisson(lambda = 25)
+
+We will use $\bar{X}$, the sample mean as the test statistic for this test.
+
+c. Generate 10,000 simulated data sets (each representing 15 days of sales) using the null model, and for each simulated data set calculate the test statistic. You should have a vector (e.g. `t.sim`) which has 10,000 simulated test statistics. 
+```{r}
+x <- c()
+set.seed(2025)
+
+for(i in 1:10000){
+  x <- c(x, mean(rpois(15, lambda = 25)))
+}
+
+x
+```
+
+
+d. Calculate the $p$-value, the proportion of simulated test statistics greater than or equal to your observed sample mean.
+```{r}
+count = 0
+data <- read.csv("./../../data/wally_sales.csv")
+
+mean(data)
+
+for(i in 1:10000){
+  if(x[i] >= 25){
+    count = count + 1;
+  }
+}
+
+count/10000
+```
+
+e. Interpret the $p$-value and state your conclusion.
+> p = 0.5086 (which is less than alpha = 0.05). We fail to reject the null hypothesis. There is no statistically significant evidence that he gets more sales with consulting as compared to without consulting. 
+
+## Problem 2. A Data Scientist Referees Ping Pong <small>(8pts total)</small>
+
+The game is Ping Pong. Players grab their paddles and hit the ping pong ball back and forth scoring points one at a time. The game continues until one player reaches 21 points, and at that point the game ends unless the point difference is less than 2. If it is less than 2 the game continues until one player wins by 2. 
+
+Suppose Athena and Bacchus play and Bacchus wins 21 to 15. Bacchus is super excited but Athena says that they should have a rematch, because she's sure that Bacchus is not better than her, it was just a fluke. 
+
+Time for a Data Scientist to settle this dispute. We must consider two hypotheses. The null hypothesis is that they are equally skilled - thus for each point scored the probability it goes to the ultimate winner is $0.50$ (this is what Athena is claiming). The alternative is that Bacchus truly is more skilled, and the probability is greater than $0.50$ (the winner actually has more skill, and doesn't win purely by chance).
+
+Create a Monte Carlo simulation of a game. Use the **point difference** at game end as the test statistic. 
+
+a. (4 points) Complete the function `playPingPong` which simulates a single game of Ping Pong with equally skilled players. Remember the logic: a point is awarded to players A with `probPlayerA`, otherwise B, and this continues until (1) the max score $\geq 21$ *and* (2) the difference between scores $\geq 2$. Have the function return the absolute point difference (absolute value).
+
+```{r}
+playPingPong <- function(scoreTrigger = 21, winMargin=2, probPlayerA=0.5){
+  #initialize a score vector to be 0,0
+
+  #repeat while the winning condition has not been reached
+  #i.e. repeat while max score < 21 or point difference < 2
+
+    #Assign a point to player 1 or 2 randomly accoriding to
+    #probPlayerA
+
+  #return the absolute point difference
+}
+```
+
+b. (2 points) Perform the Monte Carlo test; simulate 1000 (or more) games with equally skilled players. Look at the distribution of point differences, and compare the observed point difference to this distribution. What is the *p*-value of the observed point difference.
+
+```{r}
+#TODO: Enter Code Here
+```
+
+
+c. (2 points) How do you conclude? Is this one game sufficient evidence that Bacchus is the superior Ping Pong Player?
+
+
+
+## Problem 3. Quality or Quantity? <small>(8pts total)</small> 
+
+**Nifty Grifty**, a local restaurant recently had an art contest where any child under the age of 12 could submit a drawing. Submissions were accepted during the month of September The restaurant owner then looked at all submissions and the top 10 drawings were put on display. Kids were allowed to submit more than one drawing. When the winners were announced some customers were surprised that half of the 10 winners were the same kid, Paulo Pizzaco! He was even interviewed on Channel 3, lauded as an artistic prodigy.
+
+When looking at the submissions, however, you notice that among the 150 drawings submitted that 30 of them were from Paulo. It seems he submitted a new drawing every day of the month!
+
+What do you think? Is the contest evidence of the quality of his work, or a consequence of the quantity of his submissions?
+
+Take the null hypothesis to be that any of the 150 considered drawings could be included in the top 10 with equal likelihood. How likely under this model would we see 5 (or more) of Paulo's drawings in the top 10? What do you conclude? 
+
+Proceed by treating this as a formal hypothesis test. Define the null and alternative hypotheses, define your test statistic, produce a distribution of simulated test statistics from the null model and finish by calculating a *p*-value and providing your own interpretation.
+
+
+
+## Problem 4. Permutation testing <small>(8pts total; 4pts each)</small>
+
+Below are data arising from a (fictionalized) data source: the number of defects per day on an assembly line before and after installation of a new torque converter (this is a totally fictional "part" of an assembly line--just treat these as "control" and "treatment" groups, respectively).
+
+```{r}
+before = c(6,3,5,3,2,4,2,8,5,2,5,4,3,5,5,2,2,3,4,6,5,6,6,6,5,3,11,4,5,5)
+after  = c(4,2,4,2,1,2,1,7,3,1,4,3,2,4,4,1,1,2,3,4,4,5,5,4,3,2,9,3,4,4)
+```
+
+a) (4 points) Use a permutation test to assess the claim that installation of the new part *changed* the prevalence of defects. That is, test the null hypothesis that the distribution of defects is the same before and after installation of the new part. Produce a $p$-value and interpret the results of your test in context.
+
+b) (4 points) Explain, briefly, what you did above and why. Imagine that you are trying to explain to someone who isn't well versed in statistics what exactly you are doing in a permutation test. Explain your conclusion based on your test above. Three to five sentences should be plenty, but you are free to write as much or as little as you think is necessary to clearly explain your findings.
+
+
+
+## Problem 5. Memes <small>(8pts)</small>
+
+The following question comes from Karl Rohe, who developed the very first version of this class. This question has been reproduced in nearly the exact original (very amusing) wording.
+
+> **Memes, part 1** (Please forgive me. I drank too much coffee before writing this question.)
+> 
+> In class thus far, there have been 416 comments posted in the bbcollaborate chat during class. An expert panel has judged 47 of these comments to be memes. The big-bad-deans say that they are concerned "if there is evidence that more than 10% of comments are memes." So, this looks like bad news, 47/416>10%.
+> 
+> Karl pleads with the deans: "Please, oh please, you big-bad-deans... Memeing is totally random." (I don't actually know what this notion of "random" means, but please just run with it for this question.) Then, along comes you, a trusty and dedicated 340 student. You say that "because we have only observed 416 comments, we don't really know what the 'true proportion' of memes."
+> 
+> 4a: What would be a good distribution for the number of memes?
+> 
+> 4b: Using your distribution from 4a, test the null hypothesis that the 'true proportion' is actually 10%. It's all up to you now... report the p-value.
+
+Hints:
+
+- For 4a, there should be a (hopefully) fairly intuitive choice of random variable that makes sense here. Look at your list of random variables and ask yourself which of these makes the most sense.
+- For 4b, you can use the built-in function in R to simulate observations according to your null. Remember that you **always simulate *assuming* the null hypothesis**. Make sure your choice of the necessary parameter(s) reflects this assumption.
+
+
+
+## Problem 6. The Book Was Better  <small>(8pts)</small>
+
+A common sentiment when a great book is made into a movie is that "the book was better". Let's see how well a Monte Carlo test can investigate this claim. 
+
+The synthetic data file `reviews.csv` contains reviews of books and the subsequent movie adaptation for a random sample of 20 titles. Movie and book reviews are both on a 0 to 10 scale. While this dataset is synthetic, but you could imagine scrubbing the internet to get a real dataset that is similar.
+
+We will use a permutation test to investigate the claim. Use the average rating difference "book rating" - "movie rating" as your test statistic. Interpret the null hypothesis to mean that for any title, the distribution of book rating and movie rating is the same, so it's just by chance that one may be rated higher than the other. So in your code, each permutation, randomly assign the two ratings from each row to the columns. Calculate a one-sided $p$-value and interpret the $p$-value with respect to the claim being investigated.
+
+*Hint: there are a number of ways to implement this. You are encouraged to work with others to come up with a method, but be sure to actually write your own solution.*
+
+
