@@ -136,9 +136,9 @@ b. Next, create a third column named `xbar` that computes the "mean-thus-far" up
    (Hint: use the `cumsum()` function to take the cumulative sum of the `x` column, then divide by the number of observations so far)
 ```{r}
 set.seed(2025)
+n <- 1:1000
 x <- rpois(n = 1000, lambda = 13)
-xbar <- 1:1000
-
+df <- data.frame(n, x)
 df$xbar <- cumsum(df$x) / df$n
 head(df)
 ```
@@ -156,7 +156,7 @@ ggplot(df, aes(x = n, y = xbar)) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 ```
-
+> this plot shows the law of large numbers because variability is high when n is low, while it converges to the mean of 13 as n increases. This follows the law of large numbers since it states the sample mean converges to the true mean. 
 
 d. Now, increase the number of simulations to 100,000 and remake the plot, this time with a log-scale x-axis to better show the rate of convergence across the entire axis. Comment again on the output. Explain if this does or does not empirically agree with the law of large numbers.
 ```{r}
@@ -179,6 +179,7 @@ ggplot(df, aes(x = n, y = xbar)) +
   theme_minimal() + 
   theme(plot.title = element_text(hjust = 0.5))
 ```
+> once again this plot aligns with the law of large numbers since this plot clearly converges to the sample mean of 13 as the number of observations increases. 
 
 e. Repeat the above steps with a **different** random variable. You can copy your entire code chunk so far and just make the necessary modifications. Comment on this output too and whether or not it also agrees with your expectations. Make sure you CLEARLY define what the random variable you're using and clearly state what the expected value is (you may look this up on the internet if it's a new random variable we covered this week that we did not give the expectation formula for in class).
 ```{r}
@@ -327,6 +328,7 @@ scores <- c(
 
 scores
 ```
+> 1 Gruff 2 Goats 
 
 
 ```{r, echo=FALSE}
@@ -369,7 +371,7 @@ h_X <- 5 * (sin(X^2) / X)
 integral_estimate <- mean(h_X)
 integral_estimate
 ```
-> .7666
+> mean: .7666
 
 ## 6. Simulating a random variable  <small>(3pts each, 6pts total)</small>
 
