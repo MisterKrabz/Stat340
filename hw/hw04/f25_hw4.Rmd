@@ -66,7 +66,7 @@ The game is Ping Pong. Players grab their paddles and hit the ping pong ball bac
 Suppose Athena and Bacchus play and Bacchus wins 21 to 15. Bacchus is super excited but Athena says that they should have a rematch, because she's sure that Bacchus is not better than her, it was just a fluke. 
 
 Time for a Data Scientist to settle this dispute. We must consider two hypotheses. The null hypothesis is that they are equally skilled - thus for each point scored the probability it goes to the ultimate winner is $0.50$ (this is what Athena is claiming). The alternative is that Bacchus truly is more skilled, and the probability is greater than $0.50$ (the winner actually has more skill, and doesn't win purely by chance).
-
+5
 Create a Monte Carlo simulation of a game. Use the **point difference** at game end as the test statistic. 
 
 a. (4 points) Complete the function `playPingPong` which simulates a single game of Ping Pong with equally skilled players. Remember the logic: a point is awarded to players A with `probPlayerA`, otherwise B, and this continues until (1) the max score $\geq 21$ *and* (2) the difference between scores $\geq 2$. Have the function return the absolute point difference (absolute value).
@@ -74,21 +74,36 @@ a. (4 points) Complete the function `playPingPong` which simulates a single game
 ```{r}
 playPingPong <- function(scoreTrigger = 21, winMargin=2, probPlayerA=0.5){
   #initialize a score vector to be 0,0
-
+  score <- c(0,0)
+  
+  
   #repeat while the winning condition has not been reached
   #i.e. repeat while max score < 21 or point difference < 2
-
+  while(TRUE){
+    if(( score[1] >= 21 || score[2] >= 21) && abs(score[1] - score[2]) >= 2){
+      break;
+    }
     #Assign a point to player 1 or 2 randomly accoriding to
     #probPlayerA
-
+    a <- rbinom(n = 1, size = 1, prob = probPlayerA) + 1
+    score[a] = score[a] + 1
+  }
   #return the absolute point difference
+  return(abs(score[1] - score[2]))
 }
 ```
 
 b. (2 points) Perform the Monte Carlo test; simulate 1000 (or more) games with equally skilled players. Look at the distribution of point differences, and compare the observed point difference to this distribution. What is the *p*-value of the observed point difference.
 
 ```{r}
-#TODO: Enter Code Here
+x = 0
+set.seed(2025)
+
+for(i in 1:10000){
+  x = x + playPingPong()
+}
+
+x / 10000
 ```
 
 
