@@ -1,14 +1,12 @@
 ---
 title: "Homework 4"
-author: "Your name here"
+author: "Patrick Wang"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=T,eval=T,message=F,warning=F,fig.align='center')
 library(tidyverse)
-
-
 ```
 
 
@@ -35,7 +33,7 @@ for(i in 1:10000){
   x <- c(x, mean(rpois(15, lambda = 25)))
 }
 
-x
+head(x)
 ```
 
 
@@ -138,14 +136,17 @@ before = c(6,3,5,3,2,4,2,8,5,2,5,4,3,5,5,2,2,3,4,6,5,6,6,6,5,3,11,4,5,5)
 after  = c(4,2,4,2,1,2,1,7,3,1,4,3,2,4,4,1,1,2,3,4,4,5,5,4,3,2,9,3,4,4)
 ```
 
-a) (4 points) Use a permutation test to assess the claim that installation of the new part *changed* the prevalence of defects. That is, test the null hypothesis that the distribution of defects is the same before and after installation of the new part. Produce a $p$-value and interpret the results of your test in context.
+a) (4 points) Use a permutation test to assess the claim that installation of the new part *changed* the prevalence of defects. That is, test the null hypothesis that the distribution of defects is the same before and after installation of the new part. Produce a $p$-value and interpret the results of your test in context. 
+> H0: installing the part has no effect on the prevelance of defects
+> Ha: installing the parts has a significant effect on the prevelance of defects
+
 ```{r}
-observed_diff <- mean(after) - mean(before)
-observed_diff
+observed_diff <- mean(after) - mean(before) 
+observed_diff 
 
-set.seed(2025)
+set.seed(2025) 
 
-all_defects <- c(before, after)
+all_defects <- c(before, after) 
 n_before <- length(before) 
 n_after <- length(after)
 
@@ -165,9 +166,10 @@ extreme_count <- sum(abs(simulated_diffs) >= abs(observed_diff))
 p_value <- extreme_count / 10000
 p_value
 ```
+> p = 0.0164 < 0.05 = alpha, reject h0. We have statistically significant evidence that installing the new part changes the prevelence of defects. 
 
 b) (4 points) Explain, briefly, what you did above and why. Imagine that you are trying to explain to someone who isn't well versed in statistics what exactly you are doing in a permutation test. Explain your conclusion based on your test above. Three to five sentences should be plenty, but you are free to write as much or as little as you think is necessary to clearly explain your findings.
-
+> to see if the new part was genuinly defective, we calculated the observed difference in average number of defects, which was a decrease of 1.23. Then we ran a simulation to see how likely it is to get a difference this large by pure random chance. To do so, we combined all defect data together to shuffle them into new random "before" and "after" groups and we found the chance to get a difference as extreme as we observed was 1.64%, and since its lower than our 5% threshold, it is highly unlikely this happened by pure chance alone and can conclude that installing the new part significantly changed the prevelence of defects. 
 
 
 ## Problem 5. Memes <small>(8pts)</small>
