@@ -137,8 +137,8 @@ after  = c(4,2,4,2,1,2,1,7,3,1,4,3,2,4,4,1,1,2,3,4,4,5,5,4,3,2,9,3,4,4)
 ```
 
 a) (4 points) Use a permutation test to assess the claim that installation of the new part *changed* the prevalence of defects. That is, test the null hypothesis that the distribution of defects is the same before and after installation of the new part. Produce a $p$-value and interpret the results of your test in context. 
-> H0: installing the part has no effect on the prevelance of defects
-> Ha: installing the parts has a significant effect on the prevelance of defects
+> H0: P(defects_old_part) = P(defects_new_part)
+> Ha: P(defects_old_part) != P(defects_new_part)
 
 ```{r}
 observed_diff <- mean(after) - mean(before) 
@@ -214,4 +214,25 @@ We will use a permutation test to investigate the claim. Use the average rating 
 
 *Hint: there are a number of ways to implement this. You are encouraged to work with others to come up with a method, but be sure to actually write your own solution.*
 
+> H0: mean(book rating) - mean(movie rating) = 0 
+> Ha: mean(book rating) - mean(movie rating) > 0 
 
+```{r}
+set.seed(2025)
+data1 <- read.csv("./../../data/reviews.csv")
+
+observed_diff <- mean(data1$book - data1$movie)
+
+run_one_permutation <- function() {
+  # For each row, randomly swap book/movie ratings
+  swapped <- ifelse(runif(nrow(data1)) < 0.5, 1, -1)
+  permuted_diff <- mean(swapped * (data1$book - data1$movie))
+  return(permuted_diff)
+}
+
+simulated_diffs <- replicate(10000, run_one_permutation())
+
+p_value <- mean(simulated_diffs >= observed_diff)
+p_value
+```
+> p value = 0.03 < 0.05 = alpha, reject H0. We have statistically significant evidence that the average rating for a famous book is higher than the average rating for its corresponding movie. 

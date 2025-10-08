@@ -539,9 +539,8 @@ after  = c(4,2,4,2,1,2,1,7,3,1,4,3,2,4,4,1,1,2,3,4,4,5,5,4,3,2,9,3,4,4)</code></
 installation of the new part <em>changed</em> the prevalence of defects.
 That is, test the null hypothesis that the distribution of defects is
 the same before and after installation of the new part. Produce a <span class="math inline">\(p\)</span>-value and interpret the results of your
-test in context. &gt; H0: installing the part has no effect on the
-prevelance of defects &gt; Ha: installing the parts has a significant
-effect on the prevelance of defects</li>
+test in context. &gt; H0: P(defects_old_part) = P(defects_new_part) &gt;
+Ha: P(defects_old_part) != P(defects_new_part)</li>
 </ol>
 <pre class="r"><code>observed_diff &lt;- mean(after) - mean(before) 
 observed_diff </code></pre>
@@ -668,6 +667,32 @@ investigated.</p>
 <p><em>Hint: there are a number of ways to implement this. You are
 encouraged to work with others to come up with a method, but be sure to
 actually write your own solution.</em></p>
+<blockquote>
+<p>H0: mean(book rating) - mean(movie rating) = 0 Ha: mean(book rating)
+- mean(movie rating) &gt; 0</p>
+</blockquote>
+<pre class="r"><code>set.seed(2025)
+data1 &lt;- read.csv(&quot;./../../data/reviews.csv&quot;)
+
+observed_diff &lt;- mean(data1$book - data1$movie)
+
+run_one_permutation &lt;- function() {
+  # For each row, randomly swap book/movie ratings
+  swapped &lt;- ifelse(runif(nrow(data1)) &lt; 0.5, 1, -1)
+  permuted_diff &lt;- mean(swapped * (data1$book - data1$movie))
+  return(permuted_diff)
+}
+
+simulated_diffs &lt;- replicate(10000, run_one_permutation())
+
+p_value &lt;- mean(simulated_diffs &gt;= observed_diff)
+p_value</code></pre>
+<pre><code>## [1] 0.0372</code></pre>
+<blockquote>
+<p>p value = 0.03 &lt; 0.05 = alpha, reject H0. We have statistically
+significant evidence that the average rating for a famous book is higher
+than the average rating for its corresponding movie.</p>
+</blockquote>
 </div>
 
 
