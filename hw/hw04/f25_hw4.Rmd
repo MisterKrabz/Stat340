@@ -68,7 +68,6 @@ Time for a Data Scientist to settle this dispute. We must consider two hypothese
 Create a Monte Carlo simulation of a game. Use the **point difference** at game end as the test statistic. 
 
 a. (4 points) Complete the function `playPingPong` which simulates a single game of Ping Pong with equally skilled players. Remember the logic: a point is awarded to players A with `probPlayerA`, otherwise B, and this continues until (1) the max score $\geq 21$ *and* (2) the difference between scores $\geq 2$. Have the function return the absolute point difference (absolute value).
-
 ```{r}
 playPingPong <- function(scoreTrigger = 21, winMargin=2, probPlayerA=0.5){
   #initialize a score vector to be 0,0
@@ -92,7 +91,6 @@ playPingPong <- function(scoreTrigger = 21, winMargin=2, probPlayerA=0.5){
 ```
 
 b. (2 points) Perform the Monte Carlo test; simulate 1000 (or more) games with equally skilled players. Look at the distribution of point differences, and compare the observed point difference to this distribution. What is the *p*-value of the observed point difference.
-
 ```{r}
 x = 0
 set.seed(2025)
@@ -111,7 +109,6 @@ x / 10000
 c. (2 points) How do you conclude? Is this one game sufficient evidence that Bacchus is the superior Ping Pong Player?
 > p = 0.407 > 0.05 = alpha, fail to reject H0. We do not have statistically significant evidence that Bacchus is the superior Ping Pong Player 
 
-
 ## Problem 3. Quality or Quantity? <small>(8pts total)</small> 
 
 **Nifty Grifty**, a local restaurant recently had an art contest where any child under the age of 12 could submit a drawing. Submissions were accepted during the month of September The restaurant owner then looked at all submissions and the top 10 drawings were put on display. Kids were allowed to submit more than one drawing. When the winners were announced some customers were surprised that half of the 10 winners were the same kid, Paulo Pizzaco! He was even interviewed on Channel 3, lauded as an artistic prodigy.
@@ -124,8 +121,14 @@ Take the null hypothesis to be that any of the 150 considered drawings could be 
 
 Proceed by treating this as a formal hypothesis test. Define the null and alternative hypotheses, define your test statistic, produce a distribution of simulated test statistics from the null model and finish by calculating a *p*-value and providing your own interpretation.
 
+```{r}
+m <- 30    
+N_minus_m <- 150 - m
+k <- 10   
 
-
+p_value <- 1 - phyper(4, m, N_minus_m, k)    
+p_value
+```
 
 ## Problem 4. Permutation testing <small>(8pts total; 4pts each)</small>
 
