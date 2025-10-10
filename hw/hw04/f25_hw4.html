@@ -521,8 +521,12 @@ the top 10? What do you conclude?</p>
 <p>Proceed by treating this as a formal hypothesis test. Define the null
 and alternative hypotheses, define your test statistic, produce a
 distribution of simulated test statistics from the null model and finish
-by calculating a <em>p</em>-value and providing your own
-interpretation.</p>
+by calculating a <em>p</em>-value and providing your own interpretation.
+&gt; X ~ Hypergeometric(N = 150, m = 30, k = 10)</p>
+<blockquote>
+<p>H0: P(Paulo drawing selected) = 30/150 = .2 Ha: P(Paulo drawing
+selected) &gt; 30/150 = 0.2</p>
+</blockquote>
 <pre class="r"><code>m &lt;- 30    
 N_minus_m &lt;- 150 - m
 k &lt;- 10   
@@ -530,6 +534,11 @@ k &lt;- 10
 p_value &lt;- 1 - phyper(4, m, N_minus_m, k)    
 p_value</code></pre>
 <pre><code>## [1] 0.02791781</code></pre>
+<blockquote>
+<p>p = 0.0279 &lt; 0.05 = alpha, reject H0. We have statistically
+significant evidence that Paulo’s 5 winning drawings cannot be
+attributed to chance alone</p>
+</blockquote>
 </div>
 <div id="problem-4.-permutation-testing-8pts-total-4pts-each" class="section level2">
 <h2>Problem 4. Permutation testing <small>(8pts total; 4pts
@@ -586,15 +595,15 @@ statistics what exactly you are doing in a permutation test. Explain
 your conclusion based on your test above. Three to five sentences should
 be plenty, but you are free to write as much or as little as you think
 is necessary to clearly explain your findings. &gt; to see if the new
-part was genuinly defective, we calculated the observed difference in
-average number of defects, which was a decrease of 1.23. Then we ran a
-simulation to see how likely it is to get a difference this large by
-pure random chance. To do so, we combined all defect data together to
-shuffle them into new random “before” and “after” groups and we found
-the chance to get a difference as extreme as we observed was 1.64%, and
-since its lower than our 5% threshold, it is highly unlikely this
-happened by pure chance alone and can conclude that installing the new
-part significantly changed the prevelence of defects.</li>
+part genuinly changed the defect rate, we calculated the observed
+difference in average number of defects, which was a decrease of 1.23.
+Then we ran a simulation to see how likely it is to get a difference
+this large by random chance. To do so, we combined all defect data
+together to shuffle them into new random “before” and “after” groups and
+we found the chance to get a difference as extreme as we observed was
+1.64%, and since its lower than our 5% threshold, it is highly unlikely
+this happened by pure chance alone and can conclude that installing the
+new part significantly changed the prevelence of defects.</li>
 </ol>
 </div>
 <div id="problem-5.-memes-8pts" class="section level2">
