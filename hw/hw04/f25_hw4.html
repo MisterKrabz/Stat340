@@ -523,6 +523,13 @@ and alternative hypotheses, define your test statistic, produce a
 distribution of simulated test statistics from the null model and finish
 by calculating a <em>p</em>-value and providing your own
 interpretation.</p>
+<pre class="r"><code>m &lt;- 30    
+N_minus_m &lt;- 150 - m
+k &lt;- 10   
+
+p_value &lt;- 1 - phyper(4, m, N_minus_m, k)    
+p_value</code></pre>
+<pre><code>## [1] 0.02791781</code></pre>
 </div>
 <div id="problem-4.-permutation-testing-8pts-total-4pts-each" class="section level2">
 <h2>Problem 4. Permutation testing <small>(8pts total; 4pts

@@ -120,6 +120,10 @@ What do you think? Is the contest evidence of the quality of his work, or a cons
 Take the null hypothesis to be that any of the 150 considered drawings could be included in the top 10 with equal likelihood. How likely under this model would we see 5 (or more) of Paulo's drawings in the top 10? What do you conclude? 
 
 Proceed by treating this as a formal hypothesis test. Define the null and alternative hypotheses, define your test statistic, produce a distribution of simulated test statistics from the null model and finish by calculating a *p*-value and providing your own interpretation.
+> X ~ Hypergeometric(N = 150, m = 30, k = 10)
+
+> H0: P(Paulo drawing selected) = 30/150 = .2
+> Ha: P(Paulo drawing selected) > 30/150 = 0.2
 
 ```{r}
 m <- 30    
@@ -129,6 +133,7 @@ k <- 10
 p_value <- 1 - phyper(4, m, N_minus_m, k)    
 p_value
 ```
+> p = 0.0279 < 0.05 = alpha, reject H0. We have statistically significant evidence that Paulo's 5 winning drawings cannot be attributed to chance alone 
 
 ## Problem 4. Permutation testing <small>(8pts total; 4pts each)</small>
 
