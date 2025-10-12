@@ -14,13 +14,20 @@ library(tidyverse)
 For the problems below, explain what a Type 1 and Type 2 error would be. 
 
 a. Prospectors are trying to determine if there is evidence that there is a cobalt vein under a mountain.
+> type 1: they detect there is evidence of a cobalt vein under a mountain even though there is not
+> type 2: they detech there is no evidence of a cobalt vein under a mountain even though there is 
 
 b. The EPA is investigating water quality in a small town, to determine if the lead levels are unsafe.
+> type 1: they detect there isevidence of unsafe levels of lead even though the lead levels are safe 
+> type 2: they detect there is no evidence of unsafe leevels of lead even though the lead levels are at unsafe levels 
 
 c. A professor suspects a student wrote their essay using ChatGPT, and does some tests.
+> type 1: the professor detects the student wrote their essay using chatgpt even though they did not 
+> type 2: the profeessor does not detect that the student wrote their essay with chatgpt even though they did 
 
 d. A Machine Learning model is being developed to detect the presence of traffic lights in images.
-
+> type 1: the model detects the presence of traffic lights in images even when there are no traffic lights in the image 
+> type 2: the model does not detect there are traffic lights in the image even when there are traffic lights in the image  
 
 ## Problem 2. Testing coin flips <small>(10 pts)</small>
 
