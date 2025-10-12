@@ -1,0 +1,125 @@
+---
+title: "Homework 5"
+author: "Your name here"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T,eval=T,message=F,warning=F,fig.align='center')
+library(tidyverse)
+```
+
+## Problem 1. Testing Warm Up: Type 1 and Type 2 Errors <small>(8 pts; 2 pt each)</small>
+
+For the problems below, explain what a Type 1 and Type 2 error would be. 
+
+a. Prospectors are trying to determine if there is evidence that there is a cobalt vein under a mountain.
+
+b. The EPA is investigating water quality in a small town, to determine if the lead levels are unsafe.
+
+c. A professor suspects a student wrote their essay using ChatGPT, and does some tests.
+
+d. A Machine Learning model is being developed to detect the presence of traffic lights in images.
+
+
+## Problem 2. Testing coin flips <small>(10 pts)</small>
+
+In the six sequences below, only one of them is actually **randomly generated from independent flips of a fair coin**. Use a combination of everything you know (common sense, Monte Carlo, hypothesis testing, etc.) to identify which is actually random and explain your reasoning.
+
+(For full points, conduct a formal test and report a $p$-value for each sequence. You may use a combination of multiple tests to arrive at your answer. Any test statistic you employ should be intended to measure some evidence of non-randomness, but should not be specifically tailor-made to a particular sequence If you cannot compute a $p$-value for each sequence, you can still earn a significant amount of partial credit by carefully explaining your reasoning and response as best as you can.)
+
+My advice is **be creative** with the test statistics you come up with to eliminate each sequence! Think of some way of summarizing a sequence of flips that might be useful for comparing against a simulated sequence of random flips. After you come up with an idea for a statistic, remember to run it on many MC generated completely random flips to produce a distribution under the null, which you can then compare with your data to get a p-value. Also, be careful of now you define "more extreme" than the data.
+
+*3 bonus points available if you can find a single test statistic that is powerful enough to reject all the fake sequences (i.e. the $p$-value for five of the sequences are < 0.05). Does such a test statistic exist?*
+
+```{r}
+flips1 = "HTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHTHT"
+
+flips2 = "HHHTHTTTHHTHHTHHHTTTTHTHTHHTTHTHHHTHHTHTTTHTHHHTHTTTHTHTHHTHTHTTHTHHTHTHTTTHTHHHTHTHTTHTHTHHTHTHTHHHTHTTTHTHHTHTHTHHTTTHTHHTHHTTTTHTHTHHHTHTTHTHHTHTHTTHTHHTHTHHHTHHHTHTTTHTTHTTTHTHHHTHTHTTHTHHTHHTHTTT"
+
+flips3 = "HHTHTHTTTHTHHHTHHTTTHTHHTHTTTHTHTHHTHTHTTHTHHHHHHTTTHTHTHHTHTTTHTHHTHTHTTTHTHHHTTHTTTHTHTHHHHTHTTHHTTTTTHTHHHTHTHTTTTTHHHTHHTHHTHHHTTTTHTHTHHHTHHTTTTTHTHHHTHTHTHTTTHTHHHTHTHTHTTHTHHTHTHTHTTTTHTHHHTHTH"
+
+flips4 = "HTHHHHHHHTHTTHHTTHHHTHTHTTTHHTHHHTHHTTHTTTTTTTTTHTHHTTTTTHTHTHTHHTTHTTHTTTTTHHHTHTTTHTHTHHHTHTTTTHTHTHHTTHTHTTHHTHTHHHHTHTTHHTTHTTHTTHTHHHHHHTTTTTTHHHTTHTHHHHTTTHTTHHHTTHTHHTTTHHTHHTTTHTHHTHHHTHHTTHHH"
+
+flips5 = "HHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTTHHTT"
+
+flips6 = "TTHTTTHTTTTTTTHTHTHTHTTHTTHTHHTHHTTTHHTHTTTHTHHTHHHTHTTHHTHHTTHTHTTTTHTHTTTHHTTTTTTTTHTHHTTHTTTTTTHTHTHTHTTTHTTHHTTHTTTHHTTTHTTHTTTTHTTTTHHTTTHTHTHHHTTTTTTHTHHTTTTTTTTTTTTHHHTTTHHHTTTHTTTHTHTTHTTTTTHT"
+
+# you can use the function below to split the above sequences in vectors of flips
+split = function(str) strsplit(str, split="")[[1]]
+#split(flips1)
+```
+
+
+
+## Problem 3. Finding the Trick Coin <small>(6 pts; 2pts each)</small>
+
+I have two coins in my pocket - a trick coin with two heads and a fair coin with one head and one tail(s?). We'll play a game. I will grab one coin at random, and flip it $N$ times. After that you will have to decide if it is the fair coin or the trick coin. The null hypothesis is that it is the fair coin. 
+
+**Decision Rule 1**: If after $N$ flips there are no tails, then you decide it is the trick coin. If there is at least 1 tail then you know it is the fair coin. 
+
+a. Using "Decision Rule 1", what is the lowest number of flips $N$ would you need in order to have a significance level less than 5% for this test?
+b. Using $N$ from part a, what is the power of the test?
+c. Suppose $N=4$ is decided. How can you modify the decision process to have a significance level of exactly 5%? Does this change the power of the test? (*Hint: There are a few ways to do this; One way is to introduce some randomness into your decision*)
+
+
+
+
+
+## Problem 4. Testing the maximum of a uniform distribution <small>(8 pts; 2 pts each)</small>
+
+We sample $X_1, X_x,\ldots,X_n \overset{\text{iid}}\sim\text{Uniform}(0,m)$ where $m$ is an unknown maximum. Sleazy Jim tells you that $m=1$ but you're not so sure. The 50 values sampled are in the following data file:
+
+```{r}
+X <- read.csv("uniform_sample.csv")$x
+```
+
+a. Write out in formal notation the null and alternative hypotheses. 
+b. Come up with a test statistic and measure your sampled data. Is this a one-sided test or two-sided test?
+c. Simulate a distribution for the test statistic under the null hypothesis of size at least 1000. Display a histogram of your test statistic distribution.
+d. Calculate the $p$-value for this data and make a conclusion.
+
+
+
+
+## Problem 5. Blurtle <small>(10 pts; 2 pt each)</small>
+
+Have you been playing the hot new game Blurtle? It's a (fictional) word game you can play daily - you have to guess a 5 letter word and you only have 6 attempts. I've been playing for the past 100 days and I've been tracking my number of guesses. I'm trying to figure out whether I have been getting better or not.
+
+The file `blurtle.csv` contains 100 rows of data, giving the number of tries to guess the word. If it took 7 guesses that actually means I failed (you don't actually get a 7th guess). 
+
+```{r}
+blurtle <- read.csv("blurtle.csv")
+```
+
+Your task is to perform a permutation test on the data to determine if there is statistical evidence of a true improvement trend.
+
+a. State the null and alternative hypotheses
+b. Determine a test statistic that identifies a trend in the number of tries. There are many good ones you could use - be creative.
+c. Decide whether the test will be a one or two-tailed test
+d. Simulate a distribution of test statistics under the null hypothesis
+e. Calculate the test statistic on the observed data, calculate the $p$-value and state your conclusions.
+
+
+
+
+# Problem 6. What Wheat <small>(8 pts; 2 pt each)</small>
+
+Suppose we have two varieties of wheat: standard and enhanced. The standard variety produces about 16-30 plants per square foot while the enhanced variety can produce between 18-35. Suppose the number of plants is approximately normally distributed (we could round the continuous value to the nearest integer, but you can keep the simulated values as decimals for this problem).
+
+$X_{standard} \sim N(23, 2.4^2)$
+
+$X_{enh} \sim N(26.5, 2.8^2)$.
+
+Suppose you have a bin of wheat for planting but you don't know which variety it is. You plant 5 square feet of wheat and count the plants that grow.
+
+The null hypothesis is that the variety is standard.
+
+a. If we use the number of plants that grow as our test statistic, would you consider this a one-sided or two-sided test? 
+
+b. Simulate the experiment 1000 times under the null hypothesis and plot the distribution of simulated test statistics.
+
+c. If your significance level is 0.05, what rejection threshold, or rejection regions, would you use when classifying the wheat as "enhanced."
+
+d. Using the threshold from part c, how likely are you to correctly classify "enhanced" wheat?
+
