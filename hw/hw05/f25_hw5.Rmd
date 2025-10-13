@@ -39,7 +39,7 @@ My advice is **be creative** with the test statistics you come up with to elimin
 
 *3 bonus points available if you can find a single test statistic that is powerful enough to reject all the fake sequences (i.e. the $p$-value for five of the sequences are < 0.05). Does such a test statistic exist?*
 
-> for my test statistics, I will use # of rounds reesulting in consecutive outcomes and length of longest number of consecutive outcomes 
+> for my test statistics, I will use # of rounds resulting in consecutive outcomes, length of longest number of consecutive outcomes, and the triplet deviation (the distribution of triplets of flips, etc: HHT = 1, HHH = 0, ...)
 
 > H0: Sequence is random
 > Ha: Sequence is not random 
@@ -103,22 +103,23 @@ longest_consecutive_sequence = function(flips) {
   return(max(max_length, current_length))
 }
 
-calculate_digram_range = function(flips) {
-  if (length(flips) <= 1) {
+calculate_triplet_deviation = function(flips) {
+  if (length(flips) <= 2) {
     return(0)
   }
   
-  counts = c(HH=0, HT=0, TH=0, TT=0)
-  
-  for (i in 2:length(flips)) {
-    pair = paste0(flips[i-1], flips[i])
-    if (pair == "HH") counts["HH"] = counts["HH"] + 1
-    else if (pair == "HT") counts["HT"] = counts["HT"] + 1
-    else if (pair == "TH") counts["TH"] = counts["TH"] + 1
-    else if (pair == "TT") counts["TT"] = counts["TT"] + 1
+  triplets = c()
+  for (i in 1:(length(flips) - 2)) {
+    triplets = c(triplets, paste0(flips[i], flips[i+1], flips[i+2]))
   }
   
-  return(max(counts) - min(counts))
+  all_triplets = c("HHH", "HHT", "HTH", "HTT", "THH", "THT", "TTH", "TTT")
+  observed_counts = table(factor(triplets, levels = all_triplets))
+  
+  expected_count = (length(flips) - 2) / 8
+  
+  deviation = sum((observed_counts - expected_count)^2)
+  return(deviation)
 }
 
 
@@ -126,16 +127,16 @@ set.seed(2025)
 N_mc = 100000
 n_flips = length(s1)
 
-null_digram_range = seq(0, 0, length.out = N_mc)
 null_consecutive_counts = seq(0, 0, length.out = N_mc)
 null_longest_consecutive = seq(0, 0, length.out = N_mc)
+null_triplet_deviation = seq(0, 0, length.out = N_mc)
 
 for (i in 1:N_mc) {
   random_flips = sample(c("H", "T"), size = n_flips, replace = TRUE)
   
-  null_digram_range[i] = calculate_digram_range(random_flips)
   null_consecutive_counts[i] = count_consecutive(random_flips)
   null_longest_consecutive[i] = longest_consecutive_sequence(random_flips)
+  null_triplet_deviation[i] = calculate_triplet_deviation(random_flips)
 }
 
 calculate_p_value = function(observed_stat, null_distribution) {
@@ -148,26 +149,26 @@ calculate_p_value = function(observed_stat, null_distribution) {
 
 results = data.frame(
   Sequence = sequence_names,
-  P_Digram_Range = seq(0, 0, length.out = 6),
   P_Consecutive = seq(0, 0, length.out = 6),
-  P_Longest_Consecutive = seq(0, 0, length.out = 6)
+  P_Longest_Consecutive = seq(0, 0, length.out = 6),
+  P_Triplet_Deviation = seq(0, 0, length.out = 6)
 )
 
 for (i in 1:length(sequences)) {
   current_flips = sequences[[i]]
   
-  obs_dr = calculate_digram_range(current_flips)
   obs_c = count_consecutive(current_flips)
   obs_lc = longest_consecutive_sequence(current_flips)
+  obs_td = calculate_triplet_deviation(current_flips)
   
-  results$P_Digram_Range[i] = calculate_p_value(obs_dr, null_digram_range)
   results$P_Consecutive[i] = calculate_p_value(obs_c, null_consecutive_counts)
   results$P_Longest_Consecutive[i] = calculate_p_value(obs_lc, null_longest_consecutive)
+  results$P_Triplet_Deviation[i] = calculate_p_value(obs_td, null_triplet_deviation)
 }
 
 print(results)
 ```
-> flips4 is the one that is the most likely sequence to be randomly generated because the p values for all categories on flips4 are all in general consistently significantly above average as compared to the other flip sequences. 
+> flips4 is the one that is the most likely sequence to be randomly generated because the p values for all categories on flips4 are all in general consistently significantly above average as compared to the other flip sequences. I was able to use triplet deviation to get the extra credit, as with triplet deviation i was able to find that the p-value of flips4 is significantly higher than all the other flips sequences to the point where the p values of all the other flips sequences is less than 0.05 
 
 ## Problem 3. Finding the Trick Coin <small>(6 pts; 2pts each)</small>
 
