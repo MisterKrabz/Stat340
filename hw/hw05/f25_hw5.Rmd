@@ -182,17 +182,47 @@ a. Using "Decision Rule 1", what is the lowest number of flips $N$ would you nee
 > Ha: P(tails) = 0
 
 ```{r}
+num_flips = 1:10 
+set.seed(2025)
 
+chart <- data.frame(
+  num_flips = num_flips,
+  significance_level = numeric(length(num_flips))
+)
+
+simulate_flip <- function() {
+  runif(1)
+}
+
+num_simulations <- 10000
+
+for (n in chart$num_flips) {
+  all_heads_count <- 0
+
+  for(i in 1:num_simulations){
+    flips <- runif(n)
+    
+    tails_count <- sum(flips < 0.5)
+    
+    if (tails_count == 0) {
+      all_heads_count <- all_heads_count + 1
+    }
+  }
+  
+  estimated_alpha <- all_heads_count / num_simulations
+  
+  chart$significance_level[n] <- estimated_alpha
+}
+
+chart
 ```
-
+> From our data frame we can see that the first valid number of flips that results in a p value lower than 0.05 occurs at 5 flips that result in all heads. therefore at 5 flips you can be 95% confident that the coin is rigged. 
 
 b. Using $N$ from part a, what is the power of the test?
+> the power of the test is 1 because when the rigged coin is being flipped, we will never get tails, so the probability of rejecting H0 when the trick coin is flipped is 100%. 
+
 c. Suppose $N=4$ is decided. How can you modify the decision process to have a significance level of exactly 5%? Does this change the power of the test? (*Hint: There are a few ways to do this; One way is to introduce some randomness into your decision*)
-
-
-
-
-
+> 
 
 ## Problem 4. Testing the maximum of a uniform distribution <small>(8 pts; 2 pts each)</small>
 
