@@ -177,8 +177,18 @@ I have two coins in my pocket - a trick coin with two heads and a fair coin with
 **Decision Rule 1**: If after $N$ flips there are no tails, then you decide it is the trick coin. If there is at least 1 tail then you know it is the fair coin. 
 
 a. Using "Decision Rule 1", what is the lowest number of flips $N$ would you need in order to have a significance level less than 5% for this test?
+
+> H0: p(tails) > 0
+> Ha: P(tails) = 0
+
+```{r}
+
+```
+
+
 b. Using $N$ from part a, what is the power of the test?
 c. Suppose $N=4$ is decided. How can you modify the decision process to have a significance level of exactly 5%? Does this change the power of the test? (*Hint: There are a few ways to do this; One way is to introduce some randomness into your decision*)
+
 
 
 
