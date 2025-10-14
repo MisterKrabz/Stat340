@@ -229,16 +229,50 @@ c. Suppose $N=4$ is decided. How can you modify the decision process to have a s
 We sample $X_1, X_x,\ldots,X_n \overset{\text{iid}}\sim\text{Uniform}(0,m)$ where $m$ is an unknown maximum. Sleazy Jim tells you that $m=1$ but you're not so sure. The 50 values sampled are in the following data file:
 
 ```{r}
-X <- read.csv("uniform_sample.csv")$x
+X <- read.csv("../../data/uniform_sample.csv")$x
+
+X
 ```
 
 a. Write out in formal notation the null and alternative hypotheses. 
+> H0: m = 1
+> Ha: m != 1
+
 b. Come up with a test statistic and measure your sampled data. Is this a one-sided test or two-sided test?
+```{r}
+max(X)
+```
+> Test statistic: 0.9368
+> two sided test 
+
 c. Simulate a distribution for the test statistic under the null hypothesis of size at least 1000. Display a histogram of your test statistic distribution.
+```{r}
+n_simulations <- 10000
+m_null <- 1
+n <- 50
+
+simulated_maxes <- numeric(n_simulations)
+
+for (i in 1:n_simulations) {
+  sim_sample <- runif(n = n, min = 0, max = m_null)
+  simulated_maxes[i] <- max(sim_sample)
+}
+
+plot_data <- data.frame(maxes = simulated_maxes)
+
+ggplot(plot_data, aes(x = maxes)) +
+  geom_histogram(
+    bins = 50, 
+    fill = "black",
+    color = "green"
+  )
+
+```
 d. Calculate the $p$-value for this data and make a conclusion.
-
-
-
+```{r}
+2*sum(simulated_maxes >= 1)/n_simulations
+```
+> p = 2e-4 < 0.05 = alpha, reject h0. We have statistically significant evidence that the true max of the our population of our values is not equal to 1. 
 
 ## Problem 5. Blurtle <small>(10 pts; 2 pt each)</small>
 
@@ -247,12 +281,14 @@ Have you been playing the hot new game Blurtle? It's a (fictional) word game you
 The file `blurtle.csv` contains 100 rows of data, giving the number of tries to guess the word. If it took 7 guesses that actually means I failed (you don't actually get a 7th guess). 
 
 ```{r}
-blurtle <- read.csv("blurtle.csv")
+blurtle <- read.csv("../../data/blurtle.csv")
 ```
 
 Your task is to perform a permutation test on the data to determine if there is statistical evidence of a true improvement trend.
 
 a. State the null and alternative hypotheses
+> H0: 
+
 b. Determine a test statistic that identifies a trend in the number of tries. There are many good ones you could use - be creative.
 c. Decide whether the test will be a one or two-tailed test
 d. Simulate a distribution of test statistics under the null hypothesis
@@ -280,4 +316,3 @@ b. Simulate the experiment 1000 times under the null hypothesis and plot the dis
 c. If your significance level is 0.05, what rejection threshold, or rejection regions, would you use when classifying the wheat as "enhanced."
 
 d. Using the threshold from part c, how likely are you to correctly classify "enhanced" wheat?
-
