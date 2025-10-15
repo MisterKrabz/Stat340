@@ -236,14 +236,14 @@ X
 
 a. Write out in formal notation the null and alternative hypotheses. 
 > H0: m = 1
-> Ha: m != 1
+> Ha: m < 1
 
 b. Come up with a test statistic and measure your sampled data. Is this a one-sided test or two-sided test?
 ```{r}
 max(X)
 ```
 > Test statistic: 0.9368
-> two sided test 
+> one sided test 
 
 c. Simulate a distribution for the test statistic under the null hypothesis of size at least 1000. Display a histogram of your test statistic distribution.
 ```{r}
@@ -251,7 +251,7 @@ n_simulations <- 10000
 m_null <- 1
 n <- 50
 
-simulated_maxes <- numeric(n_simulations)
+simulated_maxes <- c()
 
 for (i in 1:n_simulations) {
   sim_sample <- runif(n = n, min = 0, max = m_null)
@@ -270,7 +270,11 @@ ggplot(plot_data, aes(x = maxes)) +
 ```
 d. Calculate the $p$-value for this data and make a conclusion.
 ```{r}
-2*sum(simulated_maxes >= 1)/n_simulations
+obs_max
+m_null
+head(simulated_maxes)
+summary(simulated_maxes)
+mean(simulated_maxes <= obs_max)
 ```
 > p = 2e-4 < 0.05 = alpha, reject h0. We have statistically significant evidence that the true max of the our population of our values is not equal to 1. 
 
@@ -282,20 +286,63 @@ The file `blurtle.csv` contains 100 rows of data, giving the number of tries to 
 
 ```{r}
 blurtle <- read.csv("../../data/blurtle.csv")
+
+blurtle
 ```
 
 Your task is to perform a permutation test on the data to determine if there is statistical evidence of a true improvement trend.
 
 a. State the null and alternative hypotheses
-> H0: 
+> H0: average number of tries before day 50 = average number of tries after day 50 
+> Ha: average number of tries before day 50 < average number of tries after day 50 
 
 b. Determine a test statistic that identifies a trend in the number of tries. There are many good ones you could use - be creative.
+```{r}
+mean(blurtle$tries[1:50]) - mean(blurtle$tries[51:100])
+```
+> the difference in the mean number of tries between the first 50 and last 50 days: 0.22 
+
 c. Decide whether the test will be a one or two-tailed test
+> One tailed test because we are trying to see whether it takes less tries after day 50 rather than trying to see if there is a difference 
+
 d. Simulate a distribution of test statistics under the null hypothesis
+```{r}
+perm_diffs <- c()
+
+for (i in 1:n_permutations) {
+  shuffled_tries <- sample(blurtle$tries)
+  
+  perm_first_half <- shuffled_tries[1:50]
+  perm_second_half <- shuffled_tries[51:100]
+  
+  perm_diffs[i] <- mean(perm_first_half) - mean(perm_second_half)
+}
+mean(perm_diffs)
+```
+
 e. Calculate the test statistic on the observed data, calculate the $p$-value and state your conclusions.
+```{r}
+set.seed(2025)
 
+perm_diffs <- c()
 
+observed_diff <- mean(blurtle$tries[1:50]) - mean(blurtle$tries[51:100])
+n_permutations <- 100000
 
+for(i in 1:n_permutations){
+  # shuffle the entire burdle dataset 
+  shuffled_tries <- sample(blurtle$tries)
+  
+  # split them into half and half and find the mean difference 
+  perm_first_half <- shuffled_tries[1:50]
+  perm_second_half <- shuffled_tries[51:100]
+  perm_diffs[i] <- mean(perm_first_half) - mean(perm_second_half)
+}
+
+p_value <- sum(perm_diffs >= observed_diff) / n_permutations
+p_value
+```
+> p value = .09616 > 0.05 = alpha, fail to reject H0. We do not have statistically significant evidence that there was an improvement in baffle results after 50 days of practicing. 
 
 # Problem 6. What Wheat <small>(8 pts; 2 pt each)</small>
 
@@ -310,9 +357,56 @@ Suppose you have a bin of wheat for planting but you don't know which variety it
 The null hypothesis is that the variety is standard.
 
 a. If we use the number of plants that grow as our test statistic, would you consider this a one-sided or two-sided test? 
+> one sided. Because the null hypothesis says that the variety is standard and the only other variety that the wheat could be is enhanced, then the only test that we can run is whether or not the batch grows more than what our standard wheat does. 
 
 b. Simulate the experiment 1000 times under the null hypothesis and plot the distribution of simulated test statistics.
+```{r}
+set.seed(2025)
+
+n_sims <- 1000
+sample_size <- 5
+significance_level <- 0.05
+
+mu_null <- 23
+sd_null <- 2.4
+
+mu_alt <- 26.5
+sd_alt <- 2.8
+
+null_dist_means <- numeric(n_sims)
+
+for (i in 1:n_sims) {
+  sample_data <- rnorm(n = sample_size, mean = mu_null, sd = sd_null)
+  
+  null_dist_means[i] <- mean(sample_data)
+}
+
+plot_df <- data.frame(means = null_dist_means)
+
+wheat_plot <- ggplot(plot_df, aes(x = means)) +
+  geom_histogram(bins = 20, fill = "black", color = "green") 
+
+print(wheat_plot)
+```
 
 c. If your significance level is 0.05, what rejection threshold, or rejection regions, would you use when classifying the wheat as "enhanced."
+```{r}
+rejection_threshold <- quantile(null_dist_means, 1 - significance_level)
+rejection_threshold
+```
+> 24.7209
 
 d. Using the threshold from part c, how likely are you to correctly classify "enhanced" wheat?
+```{r}
+alt_dist_means <- c()
+
+for (i in 1:n_sims) {
+  sample_data <- rnorm(n = sample_size, mean = mu_alt, sd = sd_alt)
+  
+  alt_dist_means[i] <- mean(sample_data)
+}
+
+correct_classifications <- sum(alt_dist_means > rejection_threshold)
+correct_classifications / n_sims
+```
+> 92.2% 
