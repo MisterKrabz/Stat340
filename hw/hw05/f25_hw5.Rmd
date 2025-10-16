@@ -273,13 +273,12 @@ ggplot(plot_data, aes(x = maxes)) +
 ```
 d. Calculate the $p$-value for this data and make a conclusion.
 ```{r}
-obs_max
 m_null
 head(simulated_maxes)
 summary(simulated_maxes)
-mean(simulated_maxes <= obs_max)
+mean(simulated_maxes <= max(X))
 ```
-> p = 2e-4 < 0.05 = alpha, reject h0. We have statistically significant evidence that the true max of the our population of our values is not equal to 1. 
+> p = 0.0364 < 0.05 = alpha, reject h0. We have statistically significant evidence that the true max of the our population of our values is not equal to 1. 
 
 ## Problem 5. Blurtle <small>(10 pts; 2 pt each)</small>
 
@@ -297,7 +296,7 @@ Your task is to perform a permutation test on the data to determine if there is 
 
 a. State the null and alternative hypotheses
 > H0: average number of tries before day 50 = average number of tries after day 50 
-> Ha: average number of tries before day 50 < average number of tries after day 50 
+> Ha: average number of tries before day 50 > average number of tries after day 50 
 
 b. Determine a test statistic that identifies a trend in the number of tries. There are many good ones you could use - be creative.
 ```{r}
@@ -312,7 +311,7 @@ d. Simulate a distribution of test statistics under the null hypothesis
 ```{r}
 perm_diffs <- c()
 
-for (i in 1:n_permutations) {
+for (i in 1:10000) {
   shuffled_tries <- sample(blurtle$tries)
   
   perm_first_half <- shuffled_tries[1:50]
