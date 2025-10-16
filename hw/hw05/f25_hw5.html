@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Your name here" />
+<meta name="author" content="Patrick Wang" />
 
 
 <title>Homework 5</title>
@@ -350,7 +350,7 @@ display: none;
 
 
 <h1 class="title toc-ignore">Homework 5</h1>
-<h4 class="author">Your name here</h4>
+<h4 class="author">Patrick Wang</h4>
 
 </div>
 
@@ -638,14 +638,13 @@ exactly 5%? Does this change the power of the test? (<em>Hint: There are
 a few ways to do this; One way is to introduce some randomness into your
 decision</em>)</p></li>
 </ol>
-<pre class="r"><code>0.05/0.0605</code></pre>
+<pre class="r"><code>0.05/chart$significance_level[4]</code></pre>
 <pre><code>## [1] 0.8264463</code></pre>
 <blockquote>
 <p>Basically, we will need to randomly fail to reject .826 of the coins
 that end up with combination HHHH while we will need to randomly reject
-.174 of the coins that end up with combination HHHH. Now, the power of
-the test has been redued to .826 since we have a higher probability of
-rejecting H0 when the trick coin is flipped.</p>
+.174 of the coins that end up with combination HHHH. From this, the
+power of the test has been reduced to .826</p>
 </blockquote>
 </div>
 <div id="problem-4.-testing-the-maximum-of-a-uniform-distribution-8-pts-2-pts-each" class="section level2">
@@ -717,7 +716,7 @@ data and make a conclusion.</p>
 <blockquote>
 <p>p = 0.0364 &lt; 0.05 = alpha, reject h0. We have statistically
 significant evidence that the true max of the our population of our
-values is not equal to 1.</p>
+values is less than 1.</p>
 </blockquote>
 </div>
 <div id="problem-5.-blurtle-10-pts-2-pt-each" class="section level2">

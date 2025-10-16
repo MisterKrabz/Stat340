@@ -1,6 +1,6 @@
 ---
 title: "Homework 5"
-author: "Your name here"
+author: "Patrick Wang"
 output: html_document
 ---
 
@@ -223,9 +223,9 @@ b. Using $N$ from part a, what is the power of the test?
 
 c. Suppose $N=4$ is decided. How can you modify the decision process to have a significance level of exactly 5%? Does this change the power of the test? (*Hint: There are a few ways to do this; One way is to introduce some randomness into your decision*)
 ```{r}
-0.05/0.0605
+0.05/chart$significance_level[4]
 ```
-> Basically, we will need to randomly fail to reject .826 of the coins that end up with combination HHHH while we will need to randomly reject .174 of the coins that end up with combination HHHH. Now, the power of the test has been redued to .826 since we have a higher probability of rejecting H0 when the trick coin is flipped.
+> Basically, we will need to randomly fail to reject .826 of the coins that end up with combination HHHH while we will need to randomly reject .174 of the coins that end up with combination HHHH. From this, the power of the test has been reduced to .826
 
 ## Problem 4. Testing the maximum of a uniform distribution <small>(8 pts; 2 pts each)</small>
 
@@ -278,7 +278,7 @@ head(simulated_maxes)
 summary(simulated_maxes)
 mean(simulated_maxes <= max(X))
 ```
-> p = 0.0364 < 0.05 = alpha, reject h0. We have statistically significant evidence that the true max of the our population of our values is not equal to 1. 
+> p = 0.0364 < 0.05 = alpha, reject h0. We have statistically significant evidence that the true max of the our population of our values is less than 1. 
 
 ## Problem 5. Blurtle <small>(10 pts; 2 pt each)</small>
 
