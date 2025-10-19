@@ -1,0 +1,116 @@
+---
+title: "Homework 6 - Solutions"
+author: "Patrick"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T,eval=T,message=F,warning=F,fig.align='center')
+library(tidyverse)
+```
+
+## Problem 1. More Widgets <small>(8 pts; 2pts each)</small>
+
+Let's return to the example from lecture - Universal Widgets of Madison. Suppose that the probability of a successful widget, $p$, is 0.93 (as opposed to the 0.80 from lecture). We will assume independence between each widget. 
+
+a. If we are sampling 200 widgets, use Monte Carlo to estimate the probability of getting between 90% and 95% functional in your sample.
+```{r}
+
+```
+
+b. What is the variance of $\bar{X}$? Answer this based on the theoretical variance.
+
+c. Use Monte Carlo to confirm your answer from part b is correct.
+
+d. If the true $p$ is 0.93, and you sample 200 widgets, what are the 2.5th and 97.5th percentiles of the sampling distribution of $\bar{X}$? 
+
+
+## Problem 2. Estimating Quantiles <small>(8 pts; 2pts each)</small>
+
+There are 9 algorithms in R to estimate population quantiles. Type `?quantile` to read about them. Here we will investigate the bias and variance of some of these estimators. To use the quantile function you use the syntax
+`quantile(vector, probs, type)`. For example if you have data in a vector called `sampleData` and you wish to estimate the 80th percentile using algorithm 7 (the default), you use `quantile(sampleData, .80, type=7)`
+
+Suppose we're interested in the 80th percentile for $X$, and we know that $X$ follows a uniform distribution but we don't know the parameters (if we did we wouldn't have to estimate). We want to randomly sample $n=30$ values and estimate the 90th percentile. Using MC simulation estimate the following:
+
+a. Which quantile algorithm (4 through 9) has bias closest to zero (you can use absolute bias $|E\hat{\theta}-\theta| \approx |mean(\hat{\theta})-\theta|$)? *Hint: you can use $unif(0,1)$ for the purposes of this estimation, as your answer won't depend on the upper and lower bounds chosen.*
+b. Which quantile algorithm (4 through 9) has the smallest variance?
+c. Which method is best for estimating the 90th percentile from a uniform distribution? Justify your answer from parts a and b.
+d. What about if $X\sim N(\mu, \sigma^2)$? Would you prefer a different method for estimating the 80th percentile from a normal distribution? *Hint: repeat the same analysis for $N(0,1)$.*
+
+
+## Problem 3. Estimating a Geometric $p$ <small>(9 pts; 3 pts each)</small>
+
+a. Use the method of moments to come up with an estimator for a geometric distributions parameter $p$. *Hint: Use the fact that if $X\sim Geom(p)$ then $EX=\frac{1-p}{p}*$. 
+b. Estimate the sampling distribution of this estimator when we sample $n=20$ values from from $Geom(.15)$. Show the histogram of the estimated sampling distribution.
+c. Estimate the bias of this estimator. Is it biased? Estimate the variance of the estimator.
+
+
+
+
+
+
+## Problem 4. Estimating $\lambda$ from a Poisson Distribution<small>(8 pts; 2 pts each)</small>
+
+It is interesting that if $X\sim Pois(\lambda)$ that $EX=VarX=\lambda$. One could use either $\bar{X}$ or $S^2$ as an estimator of $\lambda$ perhaps. 
+
+a. Using $n=15$ and $\lambda=20$ for this problem, use MC simulation to estimate the sampling distribution of The estimator $\bar{X}$. Show its histogram. 
+b. Repeat the same but this time use $S^2$. 
+c. Compare the two estimators. Would you prefer one over the other? Why?
+d. What about a linear combination of the two variables? Could you construct an estimator of $\lambda$ of the form $a\bar{X} + bS^2$ that would be better than using either of them by themselves? Use the variance of the estimators and their covariance as justification.
+
+
+## Problem 5. The Standard Error of $\bar{X}$<small>(8 pts; 2 pts each)</small>
+
+What would be the required sample size $n$ so that the standard error of $\bar{X}$ (i.e. $SD(\bar{X})$) would be 2 (or just under 2) for the following populations:
+
+a. $Normal(1000, 10^2)$
+b. $Pois(75)$
+c. $Binom(200, .35)$
+d. $exp(.05)$
+
+
+## Problem 6. More Estimators for $\mu$  <small>(9 pts)</small>
+
+Consider a population that is slightly skewed. The function below will generate data from this population. Also you can view a histogram of the population. The true mean of this skewed population is exactly 40.
+
+```{r}
+rskewed <- function(n){
+  return (rnorm(n, mean=6, sd=2)^2)
+}
+
+hist(rskewed(10000), breaks=50)
+```
+
+Here are a few estimators for the population mean:
+
+1. $\hat{\mu}_1=\bar{X}$, the sample mean
+2. $\hat{\mu}_2$ is the 10% trimmed mean; we remove the highest 5% of values and lowest 5% of values and then calculate the sample mean
+3. $\hat{\mu}_3$ is the midrange, the average of the minimum and the maximum.
+4. $\hat{\mu}_4$ is the Windsorized mean; like the 10% trimmed mean, but the to 5% biggest values are replaced with the next smallest value, the 5% smallest values are replaced with the next largest value. 
+
+The following function will perform the estimations. To use it you just have to specify which type you want (1 through 4):
+
+```{r}
+meanEstimate <- function(x, type=1){
+  if(type==1){
+    return(mean(x))
+  } else if(type==2){
+    trimmedX <- x[x<quantile(x, .95) & x>quantile(x, .05)]
+    return(mean(trimmedX))
+  } else if(type==3){
+    return((min(x)+max(x))/2)
+  } else if(type==4){
+    trimmedX <- x[x<quantile(x, .95) & x>quantile(x, .05)]
+    augmentedX <- c(trimmedX, 
+                    rep(min(trimmedX),sum(x<=quantile(x, .05))),
+                    rep(max(trimmedX),sum(x>=quantile(x, .95))))
+    return(mean(augmentedX))
+  }
+} 
+
+```
+
+Use Monte Carlo to estimate the bias and variance of each of these estimators. Base your estimations on a sample of size 25 from the skewed population.
+
+Which of these 4 estimators would you prefer when estimating the population mean for this skewed population? Justify your choice.
+
