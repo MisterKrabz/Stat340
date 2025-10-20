@@ -15,15 +15,43 @@ Let's return to the example from lecture - Universal Widgets of Madison. Suppose
 
 a. If we are sampling 200 widgets, use Monte Carlo to estimate the probability of getting between 90% and 95% functional in your sample.
 ```{r}
+n_simulations <- 100000
+sample_size <- 200
+p_functional <- 0.93
 
+set.seed(2025)
+
+num_functional <- rbinom(n_simulations, size = sample_size, prob = p_functional)
+
+sample_proportions <- num_functional / sample_size
+
+mean(sample_proportions >= 0.90 & sample_proportions <= 0.95)
 ```
+> 0.85591 
 
 b. What is the variance of $\bar{X}$? Answer this based on the theoretical variance.
+```{r}
+.93*(1-.93)/200
+```
+> 0.0003255
 
 c. Use Monte Carlo to confirm your answer from part b is correct.
+```{r}
+set.seed(2025)
+
+num_functional <- rbinom(n = n_simulations, size = sample_size, prob = p_functional)
+sample_proportions <- num_functional / sample_size
+var(sample_proportions)
+```
+> 0.0003265
 
 d. If the true $p$ is 0.93, and you sample 200 widgets, what are the 2.5th and 97.5th percentiles of the sampling distribution of $\bar{X}$? 
-
+```{r}
+quantile(sample_proportions, prob = 0.025)
+quantile(sample_proportions, prob = 0.975)
+```
+> 2.5%: 0.895
+> 97.5%: 0.965
 
 ## Problem 2. Estimating Quantiles <small>(8 pts; 2pts each)</small>
 
@@ -33,20 +61,96 @@ There are 9 algorithms in R to estimate population quantiles. Type `?quantile` t
 Suppose we're interested in the 80th percentile for $X$, and we know that $X$ follows a uniform distribution but we don't know the parameters (if we did we wouldn't have to estimate). We want to randomly sample $n=30$ values and estimate the 90th percentile. Using MC simulation estimate the following:
 
 a. Which quantile algorithm (4 through 9) has bias closest to zero (you can use absolute bias $|E\hat{\theta}-\theta| \approx |mean(\hat{\theta})-\theta|$)? *Hint: you can use $unif(0,1)$ for the purposes of this estimation, as your answer won't depend on the upper and lower bounds chosen.*
+```{r}
+n_simulations <- 100000
+sample_size <- 30
+true_quantile <- 0.9
+quantile_types <- 4:9
+
+estimates <- sapply(quantile_types, function(type) {
+  replicate(n_simulations, {
+    sample_data <- runif(sample_size, 0, 1)
+    quantile(sample_data, probs = 0.9, type = type)
+  })
+})
+
+colnames(estimates) <- c("Type_4", "Type_5", "Type_6", "Type_7", "Type_8", "Type_9")
+
+biases <- colMeans(estimates) - true_quantile
+abs(biases)
+```
+> algorithm 6 
+
 b. Which quantile algorithm (4 through 9) has the smallest variance?
+```{r}
+var(estimates[,1])
+var(estimates[,2])
+var(estimates[,3])
+var(estimates[,4])
+var(estimates[,5])
+var(estimates[,6])
+```
+> algorithm 6
+
 c. Which method is best for estimating the 90th percentile from a uniform distribution? Justify your answer from parts a and b.
+```{r}
+var(estimates[,1]) + biases[1]^2
+var(estimates[,2]) + biases[2]^2
+var(estimates[,3]) + biases[3]^2
+var(estimates[,4]) + biases[4]^2
+var(estimates[,5]) + biases[5]^2
+var(estimates[,6]) + biases[6]^2
+```
+> algorithm 6
+
 d. What about if $X\sim N(\mu, \sigma^2)$? Would you prefer a different method for estimating the 80th percentile from a normal distribution? *Hint: repeat the same analysis for $N(0,1)$.*
 
 
 ## Problem 3. Estimating a Geometric $p$ <small>(9 pts; 3 pts each)</small>
 
 a. Use the method of moments to come up with an estimator for a geometric distributions parameter $p$. *Hint: Use the fact that if $X\sim Geom(p)$ then $EX=\frac{1-p}{p}*$. 
+> Xbar = (1-p)/p
+> Xbar * p = 1-p
+> Xbarp + p = 1
+> p(Xbar + 1) = 1
+> phat = 1/(Xbar + 1)
+
 b. Estimate the sampling distribution of this estimator when we sample $n=20$ values from from $Geom(.15)$. Show the histogram of the estimated sampling distribution.
+```{r}
+n_simulations <- 100000
+sample_size <- 20
+true_p <- 0.15
+
+set.seed(2025)
+
+p_estimates <- replicate(n_simulations, {
+  sample_data <- rgeom(n = sample_size, prob = true_p)
+  
+  sample_mean <- mean(sample_data)
+  
+  p_hat <- 1 / (sample_mean + 1)
+
+  return(p_hat)
+})
+
+hist(p_estimates, 
+     main = "Estimated Sampling Distribution of p-hat", 
+     xlab = "Estimated p (p-hat)",
+     col = "lightblue",
+     border = "white",
+     freq = FALSE) 
+
+abline(v = true_p, col = "red", lwd = 2)
+legend("topright", legend = paste("True p =", true_p), col = "red", lty = 1, lwd = 2)
+```
+> the histogram is centered near the true value of p = 0.15 
+
 c. Estimate the bias of this estimator. Is it biased? Estimate the variance of the estimator.
+```{r}
+mean(p_estimates) - true_p
 
-
-
-
+var(p_estimates)
+```
 
 
 ## Problem 4. Estimating $\lambda$ from a Poisson Distribution<small>(8 pts; 2 pts each)</small>
