@@ -230,8 +230,17 @@ var(s_squared_estimates)
 
 d. What about a linear combination of the two variables? Could you construct an estimator of $\lambda$ of the form $a\bar{X} + bS^2$ that would be better than using either of them by themselves? Use the variance of the estimators and their covariance as justification.
 ```{r}
+cov_xbar_s2 <- cov(x_bar_estimates, s_squared_estimates)
+var_xbar <- var(x_bar_estimates)
+var_s2 <- var(s_squared_estimates)
 
+cov_xbar_s2
+var_xbar
+var_s2
+
+cor(x_bar_estimates, s_squared_estimates)
 ```
+> the best estimator is still xbar because the variance for S^2 is higher than xbar
 
 
 ## Problem 5. The Standard Error of $\bar{X}$<small>(8 pts; 2 pts each)</small>
@@ -239,10 +248,28 @@ d. What about a linear combination of the two variables? Could you construct an 
 What would be the required sample size $n$ so that the standard error of $\bar{X}$ (i.e. $SD(\bar{X})$) would be 2 (or just under 2) for the following populations:
 
 a. $Normal(1000, 10^2)$
-b. $Pois(75)$
-c. $Binom(200, .35)$
-d. $exp(.05)$
+```{r}
+(10 / 2)^2
+```
+> 25
 
+b. $Pois(75)$
+```{r}
+75 / 4
+```
+> 19 
+
+c. $Binom(200, .35)$
+```{r}
+45.5 / 4
+```
+> 12
+
+d. $exp(.05)$
+```{r}
+(20 / 2)^2
+```
+> 100
 
 ## Problem 6. More Estimators for $\mu$  <small>(9 pts)</small>
 
