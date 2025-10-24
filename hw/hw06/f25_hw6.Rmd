@@ -169,7 +169,7 @@ mean(p_estimates) - true_p
 
 var(p_estimates)
 ```
-
+> since there is an esimated bias of .00672, there is a small positive bias
 
 ## Problem 4. Estimating $\lambda$ from a Poisson Distribution<small>(8 pts; 2 pts each)</small>
 
