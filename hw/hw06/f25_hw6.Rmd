@@ -176,6 +176,28 @@ var(p_estimates)
 It is interesting that if $X\sim Pois(\lambda)$ that $EX=VarX=\lambda$. One could use either $\bar{X}$ or $S^2$ as an estimator of $\lambda$ perhaps. 
 
 a. Using $n=15$ and $\lambda=20$ for this problem, use MC simulation to estimate the sampling distribution of The estimator $\bar{X}$. Show its histogram. 
+```{r}
+n_simulations <- 100000
+sample_size <- 15
+true_lambda <- 20
+
+set.seed(2025) 
+
+x_bar_estimates <- replicate(n_simulations, {
+  sample_data <- rpois(n = sample_size, lambda = true_lambda)
+  mean(sample_data)
+})
+
+hist(x_bar_estimates,
+     main = "Sampling Distribution of X-bar for λ",
+     xlab = "Estimated λ using Sample Mean (X-bar)",
+     col = "dodgerblue",
+     border = "white",
+     freq = FALSE)
+abline(v = true_lambda, col = "red", lwd = 2)
+legend("topright", legend = "True λ = 20", col = "red", lty = 1, lwd = 2)
+```
+
 b. Repeat the same but this time use $S^2$. 
 c. Compare the two estimators. Would you prefer one over the other? Why?
 d. What about a linear combination of the two variables? Could you construct an estimator of $\lambda$ of the form $a\bar{X} + bS^2$ that would be better than using either of them by themselves? Use the variance of the estimators and their covariance as justification.
