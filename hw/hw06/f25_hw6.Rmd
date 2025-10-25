@@ -101,7 +101,8 @@ var(estimates[,4]) + biases[4]^2
 var(estimates[,5]) + biases[5]^2
 var(estimates[,6]) + biases[6]^2
 ```
-> algorithm 6
+> algorithm 6. The best metric is the one with the lowest squared means 
+error, since mean squared error combines the bias and variance to give an overall picture of the estimator's quality. 
 
 d. What about if $X\sim N(\mu, \sigma^2)$? Would you prefer a different method for estimating the 80th percentile from a normal distribution? *Hint: repeat the same analysis for $N(0,1)$.*
 ```{r}
@@ -189,10 +190,9 @@ x_bar_estimates <- replicate(n_simulations, {
 })
 
 hist(x_bar_estimates,
-     main = "Sampling Distribution of X-bar for λ",
      xlab = "Estimated λ using Sample Mean (X-bar)",
-     col = "dodgerblue",
-     border = "white",
+     col = "green",
+     border = "black",
      freq = FALSE)
 abline(v = true_lambda, col = "red", lwd = 2)
 legend("topright", legend = "True λ = 20", col = "red", lty = 1, lwd = 2)
@@ -206,10 +206,9 @@ s_squared_estimates <- replicate(n_simulations, {
 })
 
 hist(s_squared_estimates,
-     main = "Sampling Distribution of S-squared for λ",
      xlab = "Estimated λ using Sample Variance (S^2)",
-     col = "darkorange",
-     border = "white",
+     col = "green",
+     border = "black",
      freq = FALSE)
 abline(v = true_lambda, col = "red", lwd = 2)
 legend("topright", legend = "True λ = 20", col = "red", lty = 1, lwd = 2)
@@ -229,18 +228,34 @@ var(s_squared_estimates)
 > prefer to use Xbar because although both have a very low bias, the variance of xbar is much smaller than for S^2, and an estimator with a mlower variancve is more reliable. 
 
 d. What about a linear combination of the two variables? Could you construct an estimator of $\lambda$ of the form $a\bar{X} + bS^2$ that would be better than using either of them by themselves? Use the variance of the estimators and their covariance as justification.
+
+> V(a) = Var(aXbar + (1-a)S^2)
+dV/da = 2aVar(Xbar) - 2(1-a)*Var(S^2) + (2-4a)Cov(Xbar, S^2) = 0
+a = (Var(S^2) - Cov(Xbar, S^2))/(Var(Xbar) + Var(S^2) - 2Cov(Xbar, s^2))
+
 ```{r}
-cov_xbar_s2 <- cov(x_bar_estimates, s_squared_estimates)
-var_xbar <- var(x_bar_estimates)
-var_s2 <- var(s_squared_estimates)
 
-cov_xbar_s2
-var_xbar
-var_s2
+n_simulations <- 100000
+sample_size <- 15
+true_lambda <- 20
+set.seed(2025)
 
-cor(x_bar_estimates, s_squared_estimates)
+estimates <- replicate(n_simulations, {
+  sample_data <- rpois(n = sample_size, lambda = true_lambda)
+  c(mean = mean(sample_data), var = var(sample_data))
+})
+
+estimates <- t(estimates)
+
+var_xbar <- var(estimates[, "mean"])
+var_s2 <- var(estimates[, "var"])
+cov_xbar_s2 <- cov(estimates[, "mean"], estimates[, "var"])
+
+a_optimal <- (var_s2 - cov_xbar_s2) / (var_xbar + var_s2 - 2 * cov_xbar_s2)
+
+a_optimal
 ```
-> the best estimator is still xbar because the variance for S^2 is higher than xbar
+> since a is basically 1, the best linear combination is probably still just Xbar. A better estimator can be constructed, however the difference in improvement would be so marginally small that it is probably not worth the effort. 
 
 
 ## Problem 5. The Standard Error of $\bar{X}$<small>(8 pts; 2 pts each)</small>
@@ -255,13 +270,13 @@ a. $Normal(1000, 10^2)$
 
 b. $Pois(75)$
 ```{r}
-75 / 4
+(sqrt(75) / 2)^2
 ```
 > 19 
 
 c. $Binom(200, .35)$
 ```{r}
-45.5 / 4
+(sqrt(45.5)/2)^2
 ```
 > 12
 
@@ -315,7 +330,7 @@ meanEstimate <- function(x, type=1){
 Use Monte Carlo to estimate the bias and variance of each of these estimators. Base your estimations on a sample of size 25 from the skewed population.
 
 ```{r}
-set.seed(1)
+set.seed(2025)
 N <- 10000
 n <- 25
 true_mu <- 40
@@ -328,13 +343,18 @@ for (t in 1:4) {
   var[t] <- var(est)
 }
 
-data.frame(
+MSE <- var + bias^2
+
+results <- data.frame(
   Estimator = 1:4,
   Bias = round(bias, 3),
-  Variance = round(var, 3)
+  Variance = round(var, 3),
+  MSE = round(MSE, 3)
 )
+
+results
 ```
 Which of these 4 estimators would you prefer when estimating the population mean for this skewed population? Justify your choice.
 
-> the best one to estimate the population mean is the windsorized mean because it ahas low bias and variance similar to the sample mean and is more immune to skewness, making it the best estimate of thhe population mean. 
+> based on the monte carlo results, the sample mean is the best estimator for the population mean. Estimator 1 has the smalleest MSE and therefore the it provides the most accurate estimation of the true mean for this population at n = 25 
 
