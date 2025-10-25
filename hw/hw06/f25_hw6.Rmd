@@ -101,8 +101,7 @@ var(estimates[,4]) + biases[4]^2
 var(estimates[,5]) + biases[5]^2
 var(estimates[,6]) + biases[6]^2
 ```
-> algorithm 6. The best metric is the one with the lowest squared means 
-error, since mean squared error combines the bias and variance to give an overall picture of the estimator's quality. 
+> method 6. The best metric is the one with the lowest squared means error (which is method 6 = 0.002732657), since mean squared error combines the bias and variance to give an overall picture of the estimator's quality. 
 
 d. What about if $X\sim N(\mu, \sigma^2)$? Would you prefer a different method for estimating the 80th percentile from a normal distribution? *Hint: repeat the same analysis for $N(0,1)$.*
 ```{r}
@@ -162,7 +161,7 @@ hist(p_estimates,
 abline(v = true_p, col = "red", lwd = 2)
 legend("topright", legend = paste("True p =", true_p), col = "red", lty = 1, lwd = 2)
 ```
-> the histogram is centered near the true value of p = 0.15 
+> the sampling distribution of phat is centered near the true value of p = 0.15. It is unimodal, right skewed. 
 
 c. Estimate the bias of this estimator. Is it biased? Estimate the variance of the estimator.
 ```{r}
@@ -170,7 +169,7 @@ mean(p_estimates) - true_p
 
 var(p_estimates)
 ```
-> since there is an esimated bias of .00672, there is a small positive bias
+> since there is an esimated bias of .00672, there is a small positive bias. The variance is .001128825
 
 ## Problem 4. Estimating $\lambda$ from a Poisson Distribution<small>(8 pts; 2 pts each)</small>
 
@@ -225,13 +224,13 @@ mean(s_squared_estimates) - true_lambda
 var(s_squared_estimates)
 
 ```
-> prefer to use Xbar because although both have a very low bias, the variance of xbar is much smaller than for S^2, and an estimator with a mlower variancve is more reliable. 
+> prefer to use Xbar because although both have a very low bias, the variance of xbar is much smaller than for S^2, and an estimator with a lower variance is more reliable. 
 
 d. What about a linear combination of the two variables? Could you construct an estimator of $\lambda$ of the form $a\bar{X} + bS^2$ that would be better than using either of them by themselves? Use the variance of the estimators and their covariance as justification.
 
 > V(a) = Var(aXbar + (1-a)S^2)
-dV/da = 2aVar(Xbar) - 2(1-a)*Var(S^2) + (2-4a)Cov(Xbar, S^2) = 0
-a = (Var(S^2) - Cov(Xbar, S^2))/(Var(Xbar) + Var(S^2) - 2Cov(Xbar, s^2))
+> dV/da = 2aVar(Xbar) - 2(1-a)*Var(S^2) + (2-4a)Cov(Xbar, S^2) = 0
+> a = (Var(S^2) - Cov(Xbar, S^2))/(Var(Xbar) + Var(S^2) - 2Cov(Xbar, s^2))
 
 ```{r}
 
@@ -255,7 +254,7 @@ a_optimal <- (var_s2 - cov_xbar_s2) / (var_xbar + var_s2 - 2 * cov_xbar_s2)
 
 a_optimal
 ```
-> since a is basically 1, the best linear combination is probably still just Xbar. A better estimator can be constructed, however the difference in improvement would be so marginally small that it is probably not worth the effort. 
+> since a is basically 1, the best linear combination is probably still just Xbar. A better estimator can be constructed, however the difference in improvement would be extremely small. 
 
 ## Problem 5. The Standard Error of $\bar{X}$<small>(8 pts; 2 pts each)</small>
 
