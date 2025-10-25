@@ -155,8 +155,8 @@ p_estimates <- replicate(n_simulations, {
 hist(p_estimates, 
      main = "Estimated Sampling Distribution of p-hat", 
      xlab = "Estimated p (p-hat)",
-     col = "lightblue",
-     border = "white",
+     col = "green",
+     border = "black",
      freq = FALSE) 
 
 abline(v = true_p, col = "red", lwd = 2)
@@ -190,12 +190,12 @@ x_bar_estimates <- replicate(n_simulations, {
 })
 
 hist(x_bar_estimates,
-     xlab = "Estimated λ using Sample Mean (X-bar)",
+     xlab = "Estimated lambda using Sample Mean (Xbar)",
      col = "green",
      border = "black",
      freq = FALSE)
 abline(v = true_lambda, col = "red", lwd = 2)
-legend("topright", legend = "True λ = 20", col = "red", lty = 1, lwd = 2)
+legend("topright", legend = "True lambda = 20", col = "red", lty = 1, lwd = 2)
 ```
 
 b. Repeat the same but this time use $S^2$. 
@@ -206,12 +206,12 @@ s_squared_estimates <- replicate(n_simulations, {
 })
 
 hist(s_squared_estimates,
-     xlab = "Estimated λ using Sample Variance (S^2)",
+     xlab = "Estimated lambda using Sample Variance (S^2)",
      col = "green",
      border = "black",
      freq = FALSE)
 abline(v = true_lambda, col = "red", lwd = 2)
-legend("topright", legend = "True λ = 20", col = "red", lty = 1, lwd = 2)
+legend("topright", legend = "True lambda = 20", col = "red", lty = 1, lwd = 2)
 ```
 
 c. Compare the two estimators. Would you prefer one over the other? Why?
@@ -256,7 +256,6 @@ a_optimal <- (var_s2 - cov_xbar_s2) / (var_xbar + var_s2 - 2 * cov_xbar_s2)
 a_optimal
 ```
 > since a is basically 1, the best linear combination is probably still just Xbar. A better estimator can be constructed, however the difference in improvement would be so marginally small that it is probably not worth the effort. 
-
 
 ## Problem 5. The Standard Error of $\bar{X}$<small>(8 pts; 2 pts each)</small>
 
@@ -324,7 +323,6 @@ meanEstimate <- function(x, type=1){
     return(mean(augmentedX))
   }
 } 
-
 ```
 
 Use Monte Carlo to estimate the bias and variance of each of these estimators. Base your estimations on a sample of size 25 from the skewed population.
@@ -356,5 +354,5 @@ results
 ```
 Which of these 4 estimators would you prefer when estimating the population mean for this skewed population? Justify your choice.
 
-> based on the monte carlo results, the sample mean is the best estimator for the population mean. Estimator 1 has the smalleest MSE and therefore the it provides the most accurate estimation of the true mean for this population at n = 25 
+> based on the monte carlo results, the sample mean is the best estimator for the population mean. Its hard to determine from the estimator, bias, and variance data by eyeballing it, but when we use the Mean Squared error, we can see that estimator 1 has the smallest MSE and therefore the it provides the most accurate estimation of the true mean. 
 
