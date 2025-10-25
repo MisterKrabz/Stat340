@@ -1,6 +1,6 @@
 ---
 title: "Homework 6 - Solutions"
-author: "Patrick"
+author: "Patrick Wang"
 output: html_document
 ---
 
@@ -314,5 +314,27 @@ meanEstimate <- function(x, type=1){
 
 Use Monte Carlo to estimate the bias and variance of each of these estimators. Base your estimations on a sample of size 25 from the skewed population.
 
+```{r}
+set.seed(1)
+N <- 10000
+n <- 25
+true_mu <- 40
+
+bias <- var <- rep(NA, 4)
+
+for (t in 1:4) {
+  est <- replicate(N, meanEstimate(rskewed(n), type=t))
+  bias[t] <- mean(est) - true_mu
+  var[t] <- var(est)
+}
+
+data.frame(
+  Estimator = 1:4,
+  Bias = round(bias, 3),
+  Variance = round(var, 3)
+)
+```
 Which of these 4 estimators would you prefer when estimating the population mean for this skewed population? Justify your choice.
+
+> the best one to estimate the population mean is the windsorized mean because it ahas low bias and variance similar to the sample mean and is more immune to skewness, making it the best estimate of thhe population mean. 
 
